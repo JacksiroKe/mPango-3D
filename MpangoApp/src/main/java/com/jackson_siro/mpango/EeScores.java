@@ -1,6 +1,5 @@
 package com.jackson_siro.mpango;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetManager;
@@ -17,8 +16,6 @@ import android.widget.FrameLayout;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 public class EeScores extends AppCompatActivity {
     private HighScoresView highScoresView;
@@ -28,12 +25,10 @@ public class EeScores extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         FrameLayout root = new FrameLayout(this);
-        root.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT,
-                LayoutParams.FILL_PARENT));
+        root.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT));
 
         highScoresView = new HighScoresView(this, null);
         root.addView(highScoresView);
@@ -60,15 +55,8 @@ public class EeScores extends AppCompatActivity {
             OnGestureListener, SurfaceHolder.Callback {
         private GestureDetector mGestureDetector;
         private SurfaceHolder holder;
-        private int mode = 1;
-        private Bitmap backgroundBmp;
-        private Bitmap mainmenuBmp;
-        private Bitmap boxBmp;
-        private Bitmap traditionaltitleBmp;
-        private Bitmap timetitleBmp;
-        private Bitmap garbagetitleBmp;
-        private int WIDTH = 480;
-        private int HEIGHT = 800;
+        private int mode = 1, WIDTH = 480, HEIGHT = 800;
+        private Bitmap backgroundBmp, mainmenuBmp, boxBmp, levelLowTitleBmp, levelMidTitleBmp, levelHighTitleBmp;
         private Typeface typeface;
 
         private final String[] types = {"Kawaida", "Wastani", "Ngumu"};
@@ -82,94 +70,86 @@ public class EeScores extends AppCompatActivity {
             setLongClickable(true);
             holder = getHolder();
             holder.addCallback(this);
-            backgroundBmp = BitmapFactory.decodeResource(
-                    context.getResources(), R.drawable.garbagebackground);
-            DisplayMetrics dm = new DisplayMetrics();
+            backgroundBmp = BitmapFactory.decodeResource(context.getResources(), R.drawable.nairobicity);
+            DisplayMetrics dm;
             dm = getApplicationContext().getResources().getDisplayMetrics();
             WIDTH = dm.widthPixels;
             HEIGHT = dm.heightPixels;
-            boxBmp = Mpango3D.scaleBitmap(context, R.drawable.bigbox,
-                    WIDTH * 0.9f, HEIGHT * 0.2f);
-            mainmenuBmp = Mpango3D.scaleBitmap(context, R.drawable.mainmenu,
-                    WIDTH * 0.35f, HEIGHT * 0.08f);
-            traditionaltitleBmp = BitmapFactory.decodeResource(
-                    context.getResources(), R.drawable.traditional);
-            timetitleBmp = BitmapFactory.decodeResource(context.getResources(),
-                    R.drawable.timeattack);
-            garbagetitleBmp = BitmapFactory.decodeResource(
-                    context.getResources(), R.drawable.garbage);
+            boxBmp = Mpango3D.scaleBitmap(context, R.drawable.bigbox, WIDTH * 0.9f, HEIGHT * 0.2f);
+            mainmenuBmp = Mpango3D.scaleBitmap(context, R.drawable.mainmenu, WIDTH * 0.35f, HEIGHT * 0.08f);
+            levelLowTitleBmp = BitmapFactory.decodeResource(context.getResources(), R.drawable.level_low);
+            levelMidTitleBmp = BitmapFactory.decodeResource(context.getResources(), R.drawable.level_mid);
+            levelHighTitleBmp = BitmapFactory.decodeResource(context.getResources(), R.drawable.level_high);
             AssetManager am = context.getAssets();
-            typeface = Typeface.createFromAsset(am, "222-CAI978.ttf");
+            typeface = Typeface.createFromAsset(am, "ComicSansMS3.ttf");
         }
 
         void drawFrame(ArrayList<MpangoBest.Record> arr, String type) {
             Canvas canvas = holder.lockCanvas();
             if (canvas != null) {
                 Paint paint = new Paint();
-                canvas.drawBitmap(backgroundBmp, null, new RectF(0, 0, WIDTH,
-                        HEIGHT), paint);
-                canvas.drawBitmap(mainmenuBmp,
-                        (WIDTH - mainmenuBmp.getWidth()) * 0.5f,
-                        HEIGHT * 0.91f, paint);
+                canvas.drawBitmap(backgroundBmp, null, new RectF(0, 0, WIDTH, HEIGHT), paint);
+                canvas.drawBitmap(mainmenuBmp, (WIDTH - mainmenuBmp.getWidth()) * 0.5f, HEIGHT * 0.91f, paint);
                 float yPos = 0.0f;
-                float xPos = (WIDTH - boxBmp.getWidth()) * 0.5f;
+                float xPos = (WIDTH - boxBmp.getWidth()) * 0.9f;
                 if (mode == 1) {
                     yPos = 0.3f * HEIGHT - boxBmp.getHeight() * 0.5f;
-                    canvas.drawBitmap(boxBmp,
-                            (WIDTH - boxBmp.getWidth()) * 0.5f, yPos, paint);
-                    canvas.drawBitmap(traditionaltitleBmp, null, new RectF(
+                    canvas.drawBitmap(boxBmp, (WIDTH - boxBmp.getWidth()) * 0.5f, yPos, paint);
+                    canvas.drawBitmap(levelLowTitleBmp, null, new RectF(
                             0.13f * WIDTH + boxBmp.getWidth() * 0.5f - 10,
                             0.28f * HEIGHT,
                             (WIDTH + boxBmp.getWidth()) * 0.5f - 10,
-                            0.32f * HEIGHT), paint);
+                            0.32f * HEIGHT
+                    ), paint);
                 } else {
-                    canvas.drawBitmap(traditionaltitleBmp, null, new RectF(
-                            0.18f * WIDTH + 0.5f * boxBmp.getWidth() - 10,
+                    canvas.drawBitmap(levelLowTitleBmp, null, new RectF(
+                            0.18f * WIDTH + 0.5f * boxBmp.getWidth() - 20,
                             0.285f * HEIGHT,
                             (WIDTH + boxBmp.getWidth()) * 0.5f - 10,
-                            0.315f * HEIGHT), paint);
+                            0.315f * HEIGHT
+                    ), paint);
                 }
                 if (mode == 2) {
                     yPos = 0.5f * HEIGHT - boxBmp.getHeight() * 0.5f;
-                    canvas.drawBitmap(boxBmp,
-                            (WIDTH - boxBmp.getWidth()) * 0.5f, yPos, paint);
-                    canvas.drawBitmap(timetitleBmp, null, new RectF(0.13f
-                            * WIDTH + boxBmp.getWidth() * 0.5f - 10,
-                            0.48f * HEIGHT,
-                            (WIDTH + boxBmp.getWidth()) * 0.5f - 10,
-                            0.52f * HEIGHT), paint);
+                    canvas.drawBitmap(boxBmp, (WIDTH - boxBmp.getWidth()) * 0.5f, yPos, paint);
+                    canvas.drawBitmap(levelMidTitleBmp, null, new RectF(
+                            0.13f * WIDTH + boxBmp.getWidth() * 0.5f - 10, 0.48f * HEIGHT,
+                            (WIDTH + boxBmp.getWidth()) * 0.5f - 10, 0.52f * HEIGHT), paint);
                 } else {
-                    canvas.drawBitmap(timetitleBmp, null, new RectF(0.18f
-                            * WIDTH + 0.5f * boxBmp.getWidth() - 10,
+                    canvas.drawBitmap(levelMidTitleBmp, null, new RectF(
+                            0.18f * WIDTH + 0.5f * boxBmp.getWidth() - 10,
                             0.485f * HEIGHT,
                             (WIDTH + boxBmp.getWidth()) * 0.5f - 10,
-                            0.515f * HEIGHT), paint);
+                            0.515f * HEIGHT
+                    ), paint);
                 }
                 if (mode == 3) {
                     yPos = 0.7f * HEIGHT - boxBmp.getHeight() * 0.5f;
-                    canvas.drawBitmap(boxBmp,
-                            (WIDTH - boxBmp.getWidth()) * 0.5f, yPos, paint);
-                    canvas.drawBitmap(garbagetitleBmp, null, new RectF(0.2f
-                            * WIDTH + boxBmp.getWidth() * 0.5f - 10,
+                    canvas.drawBitmap(boxBmp, (WIDTH - boxBmp.getWidth()) * 0.5f, yPos, paint);
+                    canvas.drawBitmap(levelHighTitleBmp, null, new RectF(
+                            0.2f * WIDTH + boxBmp.getWidth() * 0.5f - 10,
                             0.68f * HEIGHT,
                             (WIDTH + boxBmp.getWidth()) * 0.5f - 10,
-                            0.72f * HEIGHT), paint);
+                            0.72f * HEIGHT
+                    ), paint);
                 } else {
-                    canvas.drawBitmap(garbagetitleBmp, null, new RectF(0.25f
-                            * WIDTH + boxBmp.getWidth() * 0.5f - 10,
+                    canvas.drawBitmap(levelHighTitleBmp, null, new RectF(
+                            0.25f * WIDTH + boxBmp.getWidth() * 0.5f - 10,
                             0.685f * HEIGHT,
                             (WIDTH + boxBmp.getWidth()) * 0.5f - 10,
-                            0.715f * HEIGHT), paint);
+                            0.715f * HEIGHT
+                    ), paint);
                 }
+
                 paint.setTypeface(typeface);
                 paint.setColor(0xffffffff);
                 paint.setFakeBoldText(true);
-                paint.setTextSize(20);
+                paint.setTextSize(40);
                 FontMetrics fm = paint.getFontMetrics();
                 float fFontHeight = (float) Math.ceil(fm.descent - fm.ascent);
                 yPos += fFontHeight;
-                canvas.drawText(type, xPos + 10, yPos, paint);
-                paint.setTextSize(15);
+                canvas.drawText(type, xPos + 20, yPos, paint);
+                paint.setTextSize(28);
                 fm = paint.getFontMetrics();
                 float sFontHeight = (float) Math.ceil(fm.descent - fm.ascent);
                 yPos += sFontHeight;
@@ -177,10 +157,8 @@ public class EeScores extends AppCompatActivity {
                 if (mode != 3) {
                     for (int i = 0; i < 3; i++) {
                         result = (i + 1) + ". ";
-                        result += arr.get(i).name + " ( "
-                                + String.valueOf(arr.get(i).score) + " )";
-                        canvas.drawText(result, xPos + 8, yPos + i
-                                * sFontHeight, paint);
+                        result += arr.get(i).name + " ( " + String.valueOf(arr.get(i).score) + " )";
+                        canvas.drawText(result, xPos + 8, yPos + i  * sFontHeight, paint);
                     }
                 } else {
                     for (int i = 0; i < 3; i++) {
@@ -188,13 +166,10 @@ public class EeScores extends AppCompatActivity {
                         int time = arr.get(i).score;
                         int minutes = time / 60;
                         int seconds = time % 60;
-                        result += arr.get(i).name + " ( "
-                                + String.valueOf(minutes) + " : "
-                                + String.valueOf(seconds) + ")";
-                        // result += arr.get(i).name + " ( " +
-                        // String.valueOf(arr.get(i).score) + " )";
-                        canvas.drawText(result, xPos + 8, yPos + i
-                                * sFontHeight, paint);
+                        result += arr.get(i).name + " ( " + String.valueOf(minutes) + " : "  + String.valueOf(seconds) + ")";
+                        result += arr.get(i).name + " ( " +
+                        String.valueOf(arr.get(i).score) + " )";
+                        canvas.drawText(result, xPos + 8, yPos + i  * sFontHeight, paint);
                     }
                 }
 
@@ -212,8 +187,7 @@ public class EeScores extends AppCompatActivity {
             float x = e.getX();
             float y = e.getY();
 
-            if (x >= 0.13f * WIDTH + boxBmp.getWidth() * 0.5f - 10
-                    && x <= (WIDTH + boxBmp.getWidth()) * 0.5f - 10) {
+            if (x >= 0.13f * WIDTH + boxBmp.getWidth() * 0.5f - 10 && x <= (WIDTH + boxBmp.getWidth()) * 0.5f - 10) {
                 // if(y >= 0.28f * HEIGHT && y <= 0.32f * HEIGHT)
                 if (y >= 0.22f * HEIGHT && y <= 0.38f * HEIGHT) {
                     mode = 1;

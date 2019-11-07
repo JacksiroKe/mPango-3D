@@ -25,12 +25,10 @@ public class  FfHelp extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         FrameLayout root = new FrameLayout(this);
-        root.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT,
-                LayoutParams.FILL_PARENT));
+        root.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT));
 
         helpView = new HelpView(this, null);
         root.addView(helpView);
@@ -57,12 +55,8 @@ public class  FfHelp extends AppCompatActivity {
         private GestureDetector mGestureDetector;
         private SurfaceHolder holder;
 
-        private Bitmap backgroundBmp;
-        private Bitmap boxBmp;
-        private Bitmap mainmenuBmp;
-        private Bitmap helpContentBmp;
-        private int WIDTH = 480;
-        private int HEIGHT = 800;
+        private Bitmap backgroundBmp, boxBmp, mainmenuBmp, helpContentBmp;
+        private int WIDTH = 480, HEIGHT = 800;
         private Typeface typeface;
 
         public HelpView(Context context, AttributeSet attrs) {
@@ -72,27 +66,26 @@ public class  FfHelp extends AppCompatActivity {
             setLongClickable(true);
             holder = getHolder();
             holder.addCallback(this);
-            backgroundBmp = BitmapFactory.decodeResource(context.getResources(), R.drawable.garbagebackground);
+            backgroundBmp = BitmapFactory.decodeResource(context.getResources(), R.drawable.nairobicity);
 
-
-            DisplayMetrics dm = new DisplayMetrics();
+            DisplayMetrics dm;
             dm = getApplicationContext().getResources().getDisplayMetrics();
             WIDTH = dm.widthPixels;
             HEIGHT = dm.heightPixels;
-            boxBmp = Mpango3D.scaleBitmap(context, R.drawable.largebox, WIDTH * 0.82f, HEIGHT * 0.85f);
+            boxBmp = Mpango3D.scaleBitmap(context, R.drawable.largebox, WIDTH * 0.82f, HEIGHT * 0.80f);
             AssetManager am = context.getAssets();
-            typeface = Typeface.createFromAsset(am, "222-CAI978.ttf");
+            typeface = Typeface.createFromAsset(am, "ComicSansMS3.ttf");
 
             mainmenuBmp = Mpango3D.scaleBitmap(context, R.drawable.mainmenu, WIDTH * 0.35f, HEIGHT * 0.08f);
             helpContentBmp = Bitmap.createBitmap((int) (boxBmp.getWidth() * 0.8f), (int) (HEIGHT * 0.8f), Config.ARGB_8888);
-            String helpContent = Mpango3D.getHelpContent("help.txt", FfHelp.this);
-            int index = helpContent.indexOf("\n");
-            String subContent = helpContent.substring(0, index - 1);
+
+            String subContent = getString(R.string.how_to_play);
+
             Canvas canvas = new Canvas(helpContentBmp);
             Paint paint = new Paint();
             paint.setColor(0xffffffff);
             paint.setTypeface(typeface);
-            paint.setTextSize(20);
+            paint.setTextSize(60);
             paint.setFakeBoldText(true);
             FontMetrics fm = paint.getFontMetrics();
             float fFontHeight = (float) Math.ceil(fm.descent - fm.ascent);
@@ -100,19 +93,15 @@ public class  FfHelp extends AppCompatActivity {
             float startPos = 0;
             float baseHeight = -lineSpace;
             baseHeight = Mpango3D.drawContent(subContent, fFontHeight, lineSpace, boxBmp.getWidth() * 0.8f, startPos, baseHeight, canvas, paint);
-            paint.setTextSize(15);
+            paint.setTextSize(35);
             paint.setFakeBoldText(false);
             fm = paint.getFontMetrics();
             fFontHeight = (float) Math.ceil(fm.descent - fm.ascent);
             lineSpace = 0.2f * fFontHeight;
-            int start = index + 1;
-            index = helpContent.indexOf("\n", start);
-            subContent = helpContent.substring(start, index - 1);
-            baseHeight = Mpango3D.drawContent(subContent, fFontHeight, lineSpace, boxBmp.getWidth() * 0.8f, startPos, baseHeight, canvas, paint);
-            start = index + 1;
-            index = helpContent.indexOf("\n", start);
-            subContent = helpContent.substring(start, index - 1);
-            Mpango3D.drawContent(subContent, fFontHeight, lineSpace, boxBmp.getWidth() * 0.8f, startPos, baseHeight, canvas, paint);
+
+            baseHeight = Mpango3D.drawContent(getString(R.string.how_to_play_desc1), fFontHeight, lineSpace, boxBmp.getWidth() * 0.8f, startPos, baseHeight, canvas, paint);
+
+            Mpango3D.drawContent(getString(R.string.how_to_play_desc2), fFontHeight, lineSpace, boxBmp.getWidth() * 0.8f, startPos, baseHeight, canvas, paint);
         }
 
         void drawFrame() {
@@ -122,7 +111,7 @@ public class  FfHelp extends AppCompatActivity {
                 paint.setAntiAlias(true);
                 canvas.drawBitmap(backgroundBmp, null, new RectF(0, 0, WIDTH, HEIGHT), paint);
                 canvas.drawBitmap(boxBmp, (WIDTH - boxBmp.getWidth()) / 2.0f, (HEIGHT - boxBmp.getHeight()) / 2.0f, paint);
-                canvas.drawBitmap(mainmenuBmp, (WIDTH - mainmenuBmp.getWidth()) * 0.5f,
+                canvas.drawBitmap(mainmenuBmp, ( WIDTH - mainmenuBmp.getWidth()) * 0.5f,
                         (3.0f * HEIGHT + boxBmp.getHeight()) * 0.25f - mainmenuBmp.getHeight() * 0.5f, paint);
                 canvas.drawBitmap(helpContentBmp, (WIDTH - helpContentBmp.getWidth()) * 0.5f,
                         (HEIGHT - helpContentBmp.getHeight()) * 0.5f, paint);

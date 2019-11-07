@@ -13,12 +13,17 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".DdTorus"></activity>
-        <activity android:name=".EeScores" />
+        <activity android:name=".DdTorus"
+            android:screenOrientation="portrait"></activity>
+        <activity android:name=".EeScores"
+            android:screenOrientation="portrait" />
         <activity android:name=".FfHelp" />
-        <activity android:name=".GgSettings" />
-        <activity android:name=".CcStart" />
-        <activity android:name=".BbWelcome" />
+        <activity android:name=".GgSettings"
+            android:screenOrientation="portrait" />
+        <activity android:name=".CcStart"
+            android:screenOrientation="portrait" />
+        <activity android:name=".BbWelcome"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".AppStart"
             android:configChanges="keyboardHidden|orientation"

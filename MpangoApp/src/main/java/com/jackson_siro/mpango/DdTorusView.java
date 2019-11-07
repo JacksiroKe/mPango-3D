@@ -1,6 +1,5 @@
 package com.jackson_siro.mpango;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -50,65 +49,22 @@ public class DdTorusView extends SurfaceView implements SurfaceHolder.Callback, 
 
     private SurfaceHolder holder;
     private GestureDetector mGestureDetector;
-    private Bitmap baseBmp;
-    private Bitmap bestBmp;
-    private Bitmap smallBoxBmp;
-    private Bitmap nextBmp;
-    private Bitmap titleBmp;
-    private Bitmap pauseBmp;
-    private Bitmap restartBmp;
-    private Bitmap quitBmp;
-    private Bitmap pausedBmp;
-    private Bitmap gameOverBmp;
-    private Bitmap blocksBmp;
-    private Bitmap mainmenuBmp;
-    private Bitmap scoreBmp;
-    private Bitmap backgroundBmp;
-    private Bitmap tipBoxBmp;
-    private Bitmap leftBmp;
-    private Bitmap rightBmp;
-    private Bitmap downBmp;
-    private Bitmap rotateBmp;
-    private Bitmap timeBmp;
-    private Bitmap smallpanelBmp;
-    private Bitmap smallplayBmp;
-    private Bitmap grayBmp;
-
-    //private Bitmap facebookBmp;
-    //private Bitmap twitterBmp;
-    private Bitmap tipBmp;
+    private Bitmap baseBmp, bestBmp, smallBoxBmp, nextBmp, titleBmp, pauseBmp, restartBmp, quitBmp, pausedBmp, gameOverBmp, blocksBmp, mainmenuBmp;
+    private Bitmap scoreBmp, backgroundBmp, tipBoxBmp, leftBmp, rightBmp, downBmp, rotateBmp, timeBmp, smallpanelBmp, smallplayBmp, grayBmp, tipBmp;
 
     private DdTorus ddTorus;
 
-    private boolean paused = false;
-    private boolean over = false;
-    private int rotated;
+    private boolean paused = false, over = false, animating = false;
 
-    //private float frameInterval = 0.0f;
-    private long lastFrameTime = 0;
-    private float lastMoveTime = 0.0f;
-    private boolean animating = false;
-    private float animatingStartTime = 0.0f;
+    private float frameInterval = 0.0f, lastMoveTime = 0.0f, animatingStartTime = 0.0f;
+    private long lastFrameTime = 0, lastDrop;
 
-    //private long lastDrop;
     private ArrayList<Integer> animatingLines;
-    //private int focus = 0;
-    private int theme;
-    private int WIDTH = 480;
-    private int HEIGHT = 800;
-    //ç›¸å¯¹å��æ ‡
-    private int LEFT = -159;
-    //private int TOP = -138;	//480   
-    //private int TOP = -213;  //569
-
-    private int TOP = -183;    //533
-    private int BASEY;
+    private int rotated, focus = 0, theme, WIDTH = 480, HEIGHT = 800, LEFT = -150, TOP = -150, BASEY, boxId = 1, mInterval;
     private Typeface typeface;
     private String bestScore;
 
-    private int boxId = 1;
-    private float offsetForAd;
-    private int mInterval;
+    float bw = WIDTH * 0.24f, bh = HEIGHT * 0.15f;
 
     public DdTorusView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -127,47 +83,48 @@ public class DdTorusView extends SurfaceView implements SurfaceHolder.Callback, 
         setFocusable(true);
         setLongClickable(true);
         mGestureDetector = new GestureDetector(this);
+
         blocksBmp = BitmapFactory.decodeResource(context.getResources(), R.drawable.blocks);
         nextBmp = BitmapFactory.decodeResource(context.getResources(), R.drawable.next);
         scoreBmp = BitmapFactory.decodeResource(context.getResources(), R.drawable.score);
         bestBmp = BitmapFactory.decodeResource(context.getResources(), R.drawable.best);
-        smallBoxBmp = Mpango3D.scaleBitmap(context, R.drawable.smallbox, WIDTH * 0.19f, HEIGHT * 0.08f);
         pausedBmp = BitmapFactory.decodeResource(context.getResources(), R.drawable.paused);
-        pauseBmp = Mpango3D.scaleBitmap(context, R.drawable.pause, WIDTH * 0.2f, HEIGHT * 0.05f);
-        gameOverBmp = Mpango3D.scaleBitmap(context, R.drawable.gameover, WIDTH * 0.25f, HEIGHT * 0.04f);
         baseBmp = BitmapFactory.decodeResource(ddTorus.getResources(), R.drawable.base0);
-        leftBmp = Mpango3D.scaleBitmap(context, R.drawable.left, WIDTH * 0.15f, HEIGHT * 0.09f);
-        rightBmp = Mpango3D.scaleBitmap(context, R.drawable.right, WIDTH * 0.15f, HEIGHT * 0.09f);
-        downBmp = Mpango3D.scaleBitmap(context, R.drawable.down, WIDTH * 0.15f, HEIGHT * 0.09f);
-        rotateBmp = Mpango3D.scaleBitmap(context, R.drawable.rotate, WIDTH * 0.15f, HEIGHT * 0.09f);
-        smallplayBmp = Mpango3D.scaleBitmap(context, R.drawable.smallplay, WIDTH * 0.2f, HEIGHT * 0.05f);
         timeBmp = BitmapFactory.decodeResource(context.getResources(), R.drawable.time);
-        smallpanelBmp = Mpango3D.scaleBitmap(context, R.drawable.panel, WIDTH * 0.165f, HEIGHT * 0.046f);
 
-        DisplayMetrics dm = new DisplayMetrics();
+        smallBoxBmp = Mpango3D.scaleBitmap(context, R.drawable.smallbox, bw * 2, bh);
+        gameOverBmp = Mpango3D.scaleBitmap(context, R.drawable.gameover, bw * 2, bh);
+
+        leftBmp = Mpango3D.scaleBitmap(context, R.drawable.left, bw, bh);
+        rightBmp = Mpango3D.scaleBitmap(context, R.drawable.right, bw, bh);
+        downBmp = Mpango3D.scaleBitmap(context, R.drawable.down, bw, bh);
+        rotateBmp = Mpango3D.scaleBitmap(context, R.drawable.rotate, bw, bh);
+
+        smallplayBmp = Mpango3D.scaleBitmap(context, R.drawable.smallplay, bw * 2, bh);
+        smallpanelBmp = Mpango3D.scaleBitmap(context, R.drawable.panel, bw * 2, bh);
+
+        pauseBmp = Mpango3D.scaleBitmap(context, R.drawable.pause, WIDTH * 0.75f, bh);
+
+        DisplayMetrics dm;
         dm = ddTorus.getApplicationContext().getResources().getDisplayMetrics();
         WIDTH = dm.widthPixels;
         HEIGHT = dm.heightPixels;
         TOP = (HEIGHT == 480 ? -138 : HEIGHT == 533 ? -183 : -213);
         BASEY = (HEIGHT == 480 ? 301 : HEIGHT == 533 ? 346 : 376);
 
-        //facebookBmp = BitmapFactory.decodeResource(context.getResources(), R.drawable.facebook);
-        //facebookBmp = Mpango3D.scaleBitmap(context, R.drawable.facebook, 32, 32);
-        //twitterBmp = BitmapFactory.decodeResource(context.getResources(), R.drawable.twitter);
-        tipBmp = Mpango3D.scaleBitmap(context, R.drawable.tip, 64, 64);
+        tipBmp = Mpango3D.scaleBitmap(context, R.drawable.tip, 150, 150);
 
         mainmenuBmp = Mpango3D.scaleBitmap(context, R.drawable.mainmenu, 0.65f * WIDTH, 0.14f * HEIGHT);
         restartBmp = Mpango3D.scaleBitmap(context, R.drawable.restart, 0.65f * WIDTH, 0.14f * HEIGHT);
         quitBmp = Mpango3D.scaleBitmap(context, R.drawable.quit, 0.65f * WIDTH, 0.14f * HEIGHT);
-        //tipBoxBmp = Mpango3D.scaleBitmap(context, R.drawable.bigbox, WIDTH * 0.475f, HEIGHT * 0.145f);
-        tipBoxBmp = Mpango3D.scaleBitmap(context, R.drawable.bigbox, WIDTH * 0.85f, HEIGHT * 0.23f);
+        tipBoxBmp = Mpango3D.scaleBitmap(context, R.drawable.bigbox, WIDTH * 0.85f, HEIGHT * 0.3f);
+
         grayBmp = Bitmap.createBitmap(WIDTH, HEIGHT, Config.ARGB_8888);
         Canvas bmpCanvas = new Canvas(grayBmp);
         paint.setColor(0xB3000000);
         bmpCanvas.drawRect(0, 0, WIDTH, HEIGHT, paint);
         AssetManager am = context.getAssets();
-        typeface = Typeface.createFromAsset(am, "222-CAI978.ttf");
-        offsetForAd = 0;
+        typeface = Typeface.createFromAsset(am, "ComicSansMS3.ttf");
     }
 
     private final Runnable mDrawRunnable = new Runnable() {
@@ -184,30 +141,26 @@ public class DdTorusView extends SurfaceView implements SurfaceHolder.Callback, 
         return game;
     }
 
-    public void setOffsetForAd(float offset) {
-        offsetForAd = offset;
-    }
-
     public Control getControl() {
         return control;
     }
 
     public void startGame(int mode) {
         starting = true;
-//        switch (mode) {
-//            case 1:
-        titleBmp = Mpango3D.scaleBitmap(ddTorus, R.drawable.garbage, WIDTH * 0.32f, HEIGHT * 0.03f);
-        backgroundBmp = Mpango3D.scaleBitmap(ddTorus, R.drawable.garbagebackground, WIDTH, HEIGHT);
-//                break;
-//            case 2:
-//                titleBmp = Mpango3D.scaleBitmap(ddTorus, R.drawable.timeattack, WIDTH * 0.32f, HEIGHT * 0.03f);
-//                backgroundBmp = Mpango3D.scaleBitmap(ddTorus, R.drawable.timerbackground, WIDTH, HEIGHT);
-//                break;
-//            case 3:
-//                titleBmp = Mpango3D.scaleBitmap(ddTorus, R.drawable.garbage, WIDTH * 0.32f, HEIGHT * 0.03f);
-//                backgroundBmp = Mpango3D.scaleBitmap(ddTorus, R.drawable.garbagebackground, WIDTH, HEIGHT);
-//                break;
-//        }
+        switch (mode) {
+            case 1:
+                titleBmp = Mpango3D.scaleBitmap(ddTorus, R.drawable.level_high, WIDTH * 0.55f, bh);
+                backgroundBmp = Mpango3D.scaleBitmap(ddTorus, R.drawable.nairobicity, WIDTH, HEIGHT);
+                break;
+            case 2:
+                titleBmp = Mpango3D.scaleBitmap(ddTorus, R.drawable.level_mid, WIDTH * 0.55f, bh);
+                backgroundBmp = Mpango3D.scaleBitmap(ddTorus, R.drawable.nairobicity, WIDTH, HEIGHT);
+                break;
+            case 3:
+                titleBmp = Mpango3D.scaleBitmap(ddTorus, R.drawable.level_low, WIDTH * 0.55f, bh);
+                backgroundBmp = Mpango3D.scaleBitmap(ddTorus, R.drawable.nairobicity, WIDTH, HEIGHT);
+                break;
+        }
         control.startGame(mode);
         int aScore = control.best.getRecords(game.mode - 1).get(0).score;
         bestScore = mode == 3 ? niceTime(aScore) : String.valueOf(aScore);
@@ -223,7 +176,7 @@ public class DdTorusView extends SurfaceView implements SurfaceHolder.Callback, 
         float wChars = 0;
         int k = 0;
         int i = 0;
-        int lineNum = 0;    //æ ‡å¿—ç¬¬å‡ è¡Œ
+        int lineNum = 0;
         wChars += space;
         xPos += space;
         for (; i < len; i++) {
@@ -243,7 +196,7 @@ public class DdTorusView extends SurfaceView implements SurfaceHolder.Callback, 
                     }
                 } else {
                     line = content.substring(k, i + 1);
-                    wChars = 0;//æ�¢è¡Œ
+                    wChars = 0;
                     k = i + 1;
                 }
                 h += lineSpace + fontHeight;
@@ -273,73 +226,87 @@ public class DdTorusView extends SurfaceView implements SurfaceHolder.Callback, 
             paint.setStyle(Style.FILL);
             paint.setColor(0xff000000);
             canvas.drawBitmap(backgroundBmp, null, new RectF(LEFT, TOP, WIDTH + LEFT, HEIGHT + TOP), paint);
-            canvas.drawBitmap(baseBmp, LEFT + (WIDTH - baseBmp.getWidth()) / 2, TOP + BASEY, paint);
-            float xPos = LEFT;
-            float yPos;
-            if (!over) {
-                canvas.drawBitmap(nextBmp, null, new RectF(LEFT + 18, TOP + 10 + offsetForAd, LEFT + 71, TOP + 27 + offsetForAd), paint);
-                xPos = LEFT + WIDTH - bestBmp.getWidth() - 2;
-                canvas.drawBitmap(bestBmp, null, new RectF(xPos + 2, TOP + 10 + offsetForAd, xPos + 55, TOP + 27 + offsetForAd), paint);
+            float baseh = TOP + HEIGHT - pauseBmp.getHeight() - (titleBmp.getHeight() * 3.2f);
+            canvas.drawBitmap(baseBmp, LEFT + (WIDTH - baseBmp.getWidth()) / 2, baseh, paint);
 
-                canvas.drawBitmap(smallBoxBmp, LEFT, TOP + 27 + offsetForAd, paint);
-                canvas.drawBitmap(smallBoxBmp, xPos - 14, TOP + 27 + offsetForAd, paint);
+            float lefts = LEFT + 20, tops = TOP + 20, rights = LEFT + 200, bots = TOP + 75, xPos, yPos;
+            if (!over) {
+                canvas.drawBitmap(nextBmp, null, new RectF(lefts, tops, rights, bots), paint);
+                xPos = LEFT + WIDTH - (bestBmp.getWidth() * 1.5f);
+                canvas.drawBitmap(bestBmp, null, new RectF(xPos + 20, tops, xPos + 180, bots), paint);
+
+                canvas.drawBitmap(smallBoxBmp, LEFT, bots, paint);
+                canvas.drawBitmap(smallBoxBmp, xPos - 14, bots, paint);
 
                 if (game.mode != 3 && game.score > Integer.parseInt(bestScore)) {
                     bestScore = String.valueOf(game.score);
                 }
                 paint.setTypeface(typeface);
-                paint.setTextSize(17);
+                paint.setTextSize(35);
                 paint.setColor(0xffffffff);
                 FontMetrics fm = paint.getFontMetrics();
+                
                 float fontHeight = (float) Math.ceil(fm.descent - fm.ascent);
                 float fontWidth = paint.measureText(bestScore);
-                canvas.drawText(bestScore, xPos - 14 + (smallBoxBmp.getWidth() - fontWidth) / 2.0f,
-                        TOP + 27 + offsetForAd + smallBoxBmp.getHeight() / 2.0f, paint);
 
+                bots = bots + (smallBoxBmp.getHeight() / 2);
+                canvas.drawText(bestScore, xPos - 14 + (smallBoxBmp.getWidth() - fontWidth) / 2.0f, bots, paint);
+
+                float tps = TOP + 55, ;
                 canvas.save();
-                canvas.clipRect(LEFT + (smallBoxBmp.getWidth() - 78) / 2.0f, TOP + 27 + offsetForAd + (smallBoxBmp.getHeight() - 46) / 2.0f,
-                        LEFT + (smallBoxBmp.getWidth() - 78) / 2.0f + 78, TOP + 27 + offsetForAd + (smallBoxBmp.getHeight() - 46) / 2.0f + 46);
-                canvas.drawBitmap(blocksBmp, LEFT + (smallBoxBmp.getWidth() - 78) / 2.0f - theme * 80 - 2, TOP + 27 + offsetForAd + (smallBoxBmp.getHeight() - 46) / 2.0f - 3, paint);
+                canvas.clipRect(
+                        LEFT + (smallBoxBmp.getWidth() - 90) / 2.0f,
+                        tps + (smallBoxBmp.getHeight() - 60) / 2.0f,
+                        LEFT + (smallBoxBmp.getWidth() - 90) / 2.0f + 90,
+                        tps + (smallBoxBmp.getHeight() - 60) / 2.0f + 60
+                );
+
+                yPos = bots + (smallBoxBmp.getHeight() / 2);
+                bots = yPos + 75;
+                canvas.drawBitmap(blocksBmp, LEFT, tps + (smallBoxBmp.getHeight() - 50) / 2.0f - 3, paint);
+                //canvas.drawBitmap(blocksBmp, xPos - 14, bots, paint);
                 canvas.restore();
 
-                yPos = TOP + 27 + offsetForAd + smallBoxBmp.getHeight() + 5;
-                canvas.drawBitmap(scoreBmp, null, new RectF(LEFT + 18, yPos, LEFT + 71, yPos + 17), paint);
-                canvas.drawBitmap(timeBmp, null, new RectF(xPos + 2, yPos, xPos + 53, yPos + 17), paint);
-                canvas.drawBitmap(smallpanelBmp, LEFT + (smallBoxBmp.getWidth() - smallpanelBmp.getWidth()) * 0.5f, yPos + 17, paint);
-                canvas.drawBitmap(smallpanelBmp, xPos - 14 + (smallBoxBmp.getWidth() - smallpanelBmp.getWidth()) * 0.5f, yPos + 17, paint);
+                canvas.drawBitmap(scoreBmp, null, new RectF(LEFT + 18, yPos, LEFT + 200, bots), paint);
+                canvas.drawBitmap(timeBmp, null, new RectF(xPos + 10, yPos, xPos + 180, bots), paint);
+
+                //canvas.drawBitmap(smallpanelBmp, LEFT + 10, yPos + 17, paint);
+                //canvas.drawBitmap(smallpanelBmp, xPos - 14 + (smallBoxBmp.getWidth() - smallpanelBmp.getWidth()) * 0.5f, yPos + 17, paint);
+
                 paint.setTypeface(typeface);
                 paint.setTextSize(15);
                 paint.setColor(0xffffffff);
                 fm = paint.getFontMetrics();
                 fontWidth = paint.measureText(mScore);
                 fontHeight = (float) Math.ceil(fm.descent - fm.ascent);
-                canvas.drawText(mScore, LEFT + (smallBoxBmp.getWidth() - smallpanelBmp.getWidth()) * 0.5f + (smallpanelBmp.getWidth() - fontWidth) * 0.5f,
+                /*canvas.drawText(mScore, LEFT + (smallBoxBmp.getWidth() - smallpanelBmp.getWidth()) * 0.5f + (smallpanelBmp.getWidth() - fontWidth) * 0.5f,
                         yPos + 17 + (smallpanelBmp.getHeight() + fontHeight) * 0.5f, paint);
                 fontWidth = paint.measureText(mTime);
                 canvas.drawText(mTime, xPos - 14 + (smallBoxBmp.getWidth() - smallpanelBmp.getWidth()) * 0.5f + (smallpanelBmp.getWidth() - fontWidth) * 0.5f,
-                        yPos + 17 + (smallpanelBmp.getHeight() + fontHeight) * 0.5f, paint);
+                        yPos + 17 + (smallpanelBmp.getHeight() + fontHeight) * 0.5f, paint);*/
 
+                canvas.drawBitmap(titleBmp, LEFT + (WIDTH - titleBmp.getWidth()) * 0.5f, TOP + HEIGHT - pauseBmp.getHeight() - (titleBmp.getHeight() * 1.2f), paint);
                 if (!paused) {
-                    float h = TOP + HEIGHT - pauseBmp.getHeight();
+                    float h = TOP + HEIGHT - (pauseBmp.getHeight() * 1.2f);
                     canvas.drawBitmap(pauseBmp, LEFT + (WIDTH - pauseBmp.getWidth()) * 0.5f, h, paint);
-                    canvas.drawBitmap(titleBmp, LEFT + (WIDTH - titleBmp.getWidth()) * 0.5f, h - titleBmp.getHeight(), paint);
+
                     if (Mpango3D.KEYS) {
-                        h = TOP + HEIGHT - leftBmp.getHeight();
-                        canvas.drawBitmap(leftBmp, LEFT + 4, h, paint);
-                        canvas.drawBitmap(rightBmp, LEFT + WIDTH - rightBmp.getWidth(), h, paint);
+                        h = TOP + HEIGHT - (leftBmp.getHeight() * 1.2f);
+                        canvas.drawBitmap(leftBmp, LEFT + 10, h, paint);
+                        canvas.drawBitmap(rightBmp, LEFT + WIDTH - (rightBmp.getWidth() * 1.2f), h, paint);
                         h -= rotateBmp.getHeight();
-                        canvas.drawBitmap(downBmp, LEFT + 4, h, paint);
-                        canvas.drawBitmap(rotateBmp, LEFT + WIDTH - rotateBmp.getWidth(), h, paint);
+                        canvas.drawBitmap(downBmp, LEFT + 10, h, paint);
+                        canvas.drawBitmap(rotateBmp, LEFT + WIDTH - (rotateBmp.getWidth() * 1.2f), h, paint);
                     }
                     if (starting) {
-                        game.drawCylinder(canvas, paint, false, false, 0, null);
+                        //game.drawCylinder(canvas, paint, false, false, 0, null);
                         starting = false;
                     }
 
                     if (Mpango3D.HELP && game.dropPositions[3] > TOP + 101) {
-                        game.drawCylinder(canvas, paint, true, false, 0, null);
+                        //game.drawCylinder(canvas, paint, true, false, 0, null);
                         paint.setTypeface(typeface);
-                        paint.setTextSize(17);
+                        paint.setTextSize(40);
                         paint.setColor(0xffffffff);
                         fm = paint.getFontMetrics();
                         fontHeight = (float) Math.ceil(fm.descent - fm.ascent);
@@ -351,21 +318,18 @@ public class DdTorusView extends SurfaceView implements SurfaceHolder.Callback, 
                         canvas.drawBitmap(tipBmp, boxPosX + 5, boxPosY + 5, paint);
                         if (boxId < 4) {
                             String tip;
-                            if (boxId == 1) {
-                                tip = "Guza kipande kinachodondoka ili kuweza kukigeuza.";
-                            } else if (boxId == 2) {
-                                tip = "Guza sehemu tarajiwa ya kipande kidondokacho ili kuzidisha kasi ya kudondoka.";
-                            } else {
-                                tip = "Geuza kipande kidondoka kusoto au kulia kwa ishara yako.";
-                            }
+                            if (boxId == 1) tip = getContext().getString(R.string.hint1);
+                            else if (boxId == 2) tip = getContext().getString(R.string.hint2);
+                            else tip = getContext().getString(R.string.hint3);
+
                             boxPosY += 10;
                             Mpango3D.drawContent(tip, fontHeight, lineSpace, tipBoxBmp.getWidth() * 0.9f - 5 - tipBmp.getWidth() * 0.6f,
                                     startPos, boxPosY, canvas, paint);
                             if (boxId == 1 || boxId == 2) {
-                                String nextTip = "Dokezo lijalo";
+                                String nextTip = getContext().getString(R.string.next_hint);
                                 paint.setColor(0xffffff00);
                                 fontWidth = paint.measureText(nextTip);
-                                boxPosY = (HEIGHT + tipBoxBmp.getHeight()) * 0.5f + TOP - 20;
+                                boxPosY = (HEIGHT + tipBoxBmp.getHeight()) * 0.5f + TOP - 70;
                                 boxPosX = 0.5f * WIDTH + 0.45f * tipBoxBmp.getWidth() + LEFT - fontWidth - 5;
                                 canvas.drawText(nextTip, boxPosX, boxPosY, paint);
                             }
@@ -374,57 +338,28 @@ public class DdTorusView extends SurfaceView implements SurfaceHolder.Callback, 
                         nextFrame(null);
                     }
                 } else {
-                    canvas.drawBitmap(pausedBmp, LEFT + (WIDTH - baseBmp.getWidth()) / 2 + 37, TOP + BASEY + 30, paint);
-                    canvas.drawBitmap(grayBmp, LEFT, TOP, paint);
-                    canvas.drawBitmap(smallplayBmp, LEFT + (WIDTH - pauseBmp.getWidth()) * 0.5f, TOP + HEIGHT - pauseBmp.getHeight(), paint);
-                    canvas.drawBitmap(restartBmp, LEFT + (WIDTH - restartBmp.getWidth()) / 2, TOP + 0.5f * HEIGHT - 1.04f * quitBmp.getHeight(), paint);
-                    canvas.drawBitmap(quitBmp, LEFT + (WIDTH - quitBmp.getWidth()) * 0.5f, TOP + 0.5f * HEIGHT, paint);
-                    //Facebookåˆ†äº«
-                    //canvas.drawBitmap(facebookBmp, LEFT + (WIDTH - quitBmp.getWidth()) * 0.5f, TOP + 0.5f * HEIGHT + 1.04f * quitBmp.getHeight(), paint);
-                    /*//twitteråˆ†äº«
-                         canvas.drawBitmap(twitterBmp, LEFT + (WIDTH - quitBmp.getWidth()) * 0.5f,
-                                             TOP + 0.5f * HEIGHT + 1.04f * quitBmp.getHeight() + 1.04f * facebookBmp.getHeight(), paint);*/
-//                    String share = "Share to Facebook";
-//                    paint.setTypeface(typeface);
-//                    paint.setTextSize(17);
-//                    paint.setColor(0xffffffff);
-//                    fm = paint.getFontMetrics();
-//                    fontHeight = (float) Math.ceil(fm.descent - fm.ascent);
-//                    fontWidth = paint.measureText(share);
-//                    canvas.drawText(share, LEFT + (WIDTH - quitBmp.getWidth()) * 0.5f + facebookBmp.getWidth() + 10,
-//                            TOP + 0.5f * HEIGHT + 1.04f * quitBmp.getHeight() + 0.5f * (facebookBmp.getHeight() + fontHeight), paint);
-                    /*share = "Share to Twitter";
-                         canvas.drawText(share, LEFT + (WIDTH - quitBmp.getWidth()) * 0.5f + twitterBmp.getWidth() + 10,
-                                 TOP + 0.5f * HEIGHT + 1.04f * quitBmp.getHeight() + 1.04f * facebookBmp.getHeight() + 0.5f * (twitterBmp.getHeight() + fontHeight) , paint);*/
+                    //canvas.drawBitmap(pausedBmp, LEFT + (WIDTH - baseBmp.getWidth()) / 2 + 37, TOP + BASEY + 30, paint);
+                    //canvas.drawBitmap(grayBmp, LEFT, TOP, paint);
+                    //canvas.drawBitmap(smallplayBmp, LEFT + (WIDTH - pauseBmp.getWidth()) * 0.5f, TOP + HEIGHT - pauseBmp.getHeight(), paint);
+                    //canvas.drawBitmap(restartBmp, LEFT + (WIDTH - restartBmp.getWidth()) / 2, TOP + 0.5f * HEIGHT - 1.04f * quitBmp.getHeight(), paint);
+                    //canvas.drawBitmap(quitBmp, LEFT + (WIDTH - quitBmp.getWidth()) * 0.5f, TOP + 0.5f * HEIGHT, paint);
                 }
-                canvas.drawBitmap(titleBmp, LEFT + (WIDTH - titleBmp.getWidth()) * 0.5f,
-                        TOP + HEIGHT - pauseBmp.getHeight() - titleBmp.getHeight(), paint);
             } else {
-                canvas.drawBitmap(scoreBmp, LEFT + (WIDTH - scoreBmp.getWidth()) / 2.0f, TOP + 55, paint);
+                /*canvas.drawBitmap(scoreBmp, LEFT + (WIDTH - scoreBmp.getWidth()) / 2.0f, TOP + 55, paint);
                 paint.setTypeface(typeface);
                 paint.setTextSize(17);
                 paint.setColor(0xffffffff);
                 FontMetrics fm = paint.getFontMetrics();
                 float fontHeight = (float) Math.ceil(fm.descent - fm.ascent);
                 float fontWidth = paint.measureText(mScore);
-                canvas.drawText(mScore, LEFT + (WIDTH - fontWidth) / 2.0f,
-                        TOP + 55 + scoreBmp.getHeight() + fontHeight, paint);
+                canvas.drawText(mScore, LEFT + (WIDTH - fontWidth) / 2.0f, TOP + 55 + scoreBmp.getHeight() + fontHeight, paint);
 
                 yPos = TOP + 126;
                 canvas.drawBitmap(gameOverBmp, LEFT + (WIDTH - gameOverBmp.getWidth()) / 2, TOP + 126, paint);
                 yPos += gameOverBmp.getHeight() + restartBmp.getHeight() * 0.08f;
                 canvas.drawBitmap(restartBmp, LEFT + (WIDTH - restartBmp.getWidth()) * 0.5f, yPos, paint);
                 yPos += restartBmp.getHeight() * 1.04f;
-                canvas.drawBitmap(mainmenuBmp, LEFT + (WIDTH - restartBmp.getWidth()) * 0.5f, yPos, paint);
-//                yPos += restartBmp.getHeight() * 1.04f;
-//                canvas.drawBitmap(facebookBmp, LEFT + (WIDTH - restartBmp.getWidth()) * 0.5f, yPos, paint);    //Facebookåˆ†äº«
-//                String share = "Share to Facebook";
-//                canvas.drawText(share, LEFT + (WIDTH - quitBmp.getWidth()) * 0.5f + facebookBmp.getWidth() + 10,
-//                        yPos + 0.5f * (facebookBmp.getHeight() + fontHeight), paint);
-                /*yPos += facebookBmp.getHeight() * 1.04f;
-                    canvas.drawBitmap(twitterBmp, LEFT + (WIDTH - restartBmp.getWidth()) * 0.5f, yPos, paint);	//Twitteråˆ†äº«
-                    share = "Share to Twitter";
-                    canvas.drawText(share, LEFT + (WIDTH - restartBmp.getWidth()) * 0.5f + twitterBmp.getWidth() + 10, yPos + 0.5f * (twitterBmp.getHeight() + fontHeight), paint);*/
+                canvas.drawBitmap(mainmenuBmp, LEFT + (WIDTH - restartBmp.getWidth()) * 0.5f, yPos, paint);*/
             }
         }
         if (canvas != null) {
@@ -434,26 +369,17 @@ public class DdTorusView extends SurfaceView implements SurfaceHolder.Callback, 
         mHandler.removeCallbacks(mDrawRunnable);
         t = System.currentTimeMillis() - t;
         if (mVisible == VISIBLE) {
-            if (t >= mInterval) {
-                mHandler.post(mDrawRunnable);
-            } else {
-                mHandler.postDelayed(mDrawRunnable, mInterval - t);
-            }
+            if (t >= mInterval) mHandler.post(mDrawRunnable);
+            else mHandler.postDelayed(mDrawRunnable, mInterval - t);
         }
-        /*if (mVisible == VISIBLE) {
-              mHandler.postDelayed(mDrawRunnable, 0);
-          }*/
     }
 
     public static String niceTime(long t) {
         long h = t / 60;
         long m = t % 60;
         String time;
-        if (m < 10) {
-            time = "0" + m;
-        } else {
-            time = String.valueOf(m);
-        }
+        if (m < 10) time = "0" + m;
+        else time = String.valueOf(m);
         return h + ":" + time;
     }
 
@@ -462,13 +388,10 @@ public class DdTorusView extends SurfaceView implements SurfaceHolder.Callback, 
         for (int j = 0; j < 15; j++) {
             int i = 0;
             for (; i < 15; i++) {
-                if (game.field[i][j] == null) {
-                    break;
-                }
+                if (game.field[i][j] == null) break;
             }
             if (i == 15) {
                 for (i = 0; i < 15; i++) {
-                    // åˆ é™¤ç¬¬jä¸ªæ•°ç»„ï¼Œå¹¶å‰�ç§»å…¶å�Žçš„å…ƒç´ 
                     game.field[i][j] = null;
                     for (int k = j + 1; k < 15; k++) {
                         game.field[i][k - 1] = game.field[i][k];
@@ -480,7 +403,7 @@ public class DdTorusView extends SurfaceView implements SurfaceHolder.Callback, 
                 cleared++;
             }
         }
-        // int scores[] = {0, 100, 250, 400, 600, 1000}; //æº�ç �
+        // int scores[] = {0, 100, 250, 400, 600, 1000};
         int scores[] = {0, 10, 25, 40, 60, 100};
         game.score += scores[cleared];
         if (game.mode == 3) {
@@ -488,13 +411,9 @@ public class DdTorusView extends SurfaceView implements SurfaceHolder.Callback, 
             for (; j > 2; j--) {
                 int i = 0;
                 for (; i < 15; i++) {
-                    if (game.field[i][j] != null) {
-                        break;
-                    }
+                    if (game.field[i][j] != null) break;
                 }
-                if (i < 15) {
-                    break;
-                }
+                if (i < 15) break;
             }
             // g('score').innerHTML = '+' + (j - 2);
             mScore = "+" + (j - 2);
@@ -502,16 +421,14 @@ public class DdTorusView extends SurfaceView implements SurfaceHolder.Callback, 
                 change();
                 game.drawCylinder(canvas, paint, false, false, 0, null);
                 control.gameOver(COMPLETED);
-                game.viewPort.setTarget(game.viewPort.mTarget
-                        + game.blockData.get(game.type).view);
+                game.viewPort.setTarget(game.viewPort.mTarget + game.blockData.get(game.type).view);
                 return;
             }
         } else {
             mScore = String.valueOf((int) Math.floor(game.score));
             // g('score').innerHTML = Math.floor(MpangoGame.score);
         }
-        game.viewPort.setTarget(game.viewPort.mTarget
-                + game.blockData.get(game.type).view);
+        game.viewPort.setTarget(game.viewPort.mTarget + game.blockData.get(game.type).view);
         change();
     }
 
@@ -534,18 +451,14 @@ public class DdTorusView extends SurfaceView implements SurfaceHolder.Callback, 
         //if(keysDown.down != 0)
         {
             game.score += elapsed / 100;
-            if (game.mode != 3) {
-                mScore = String.valueOf(game.score);
-            }
+            if (game.mode != 3) mScore = String.valueOf(game.score);
             delay = Math.min(delay, 30);
         }
         game.posY -= Math.max(0, Math.min(1, (float) (elapsed / delay)));
         lastFrameTime = now;
         if (animating == true) {
-            elapsed = (float) ((game.time - animatingStartTime) /
-                    Math.sqrt(animatingLines.size()));
+            elapsed = (float) ((game.time - animatingStartTime) / Math.sqrt(animatingLines.size()));
             if (elapsed > 300 || elapsed < 0) {
-                //æ¶ˆç§¯æœ¨
                 animating = false;
                 afterPlace();
                 game.drawCylinder(canvas, paint, true, false, 0, null);    //é˜²æ­¢å‡ºçŽ°ç™½å±�
@@ -553,8 +466,7 @@ public class DdTorusView extends SurfaceView implements SurfaceHolder.Callback, 
                     try {
                         MediaPlayer mp = MediaPlayer.create(getContext(), R.raw.explode);
                         mp.start();
-                    } catch (Exception e) {
-                    }
+                    } catch (Exception e) { }
                 }
                 return;
             } else {
@@ -564,14 +476,12 @@ public class DdTorusView extends SurfaceView implements SurfaceHolder.Callback, 
         }
         if (keyForce != null || (keysDown.left ^ keysDown.right) && (now - lastMoveTime > 150)) {
             lastMoveTime = now;
-            move(keyForce == "left" ? 1 : keyForce == "right" ? -1 :
-                    keysDown.left ? 1 : keysDown.right ? -1 : 0);
+            move(keyForce == "left" ? 1 : keyForce == "right" ? -1 : keysDown.left ? 1 : keysDown.right ? -1 : 0);
             if (Mpango3D.SOUND) {
                 try {
                     MediaPlayer mp = MediaPlayer.create(getContext(), R.raw.rotate);
                     mp.start();
-                } catch (Exception e) {
-                }
+                } catch (Exception e) { }
             }
         }
         int slotY = (int) Math.floor(game.posY);
@@ -592,7 +502,6 @@ public class DdTorusView extends SurfaceView implements SurfaceHolder.Callback, 
                 int index = (int) (slotY + game.block.get(i).y);
                 if (index < 0 || (index >= 0 && index < 15 &&
                         game.field[(int) (((game.x + game.block.get(i).x) % 15 + 15) % 15)][index] != null)) {
-                    //æ–¹å�—åˆ°è¾¾åº•éƒ¨
                     place(slotY + 1);
                     game.drawCylinder(canvas, paint, true, false, 0, null);//é˜²æ­¢å‡ºçŽ°ç™½å±�
                     if (Mpango3D.SOUND) {
@@ -619,9 +528,7 @@ public class DdTorusView extends SurfaceView implements SurfaceHolder.Callback, 
     }
 
     public void resume() {
-        if (!paused) {
-            return;
-        }
+        if (!paused) return;
         paused = false;
         keysDown.left = false;
         keysDown.right = false;
@@ -631,9 +538,7 @@ public class DdTorusView extends SurfaceView implements SurfaceHolder.Callback, 
     }
 
     void pause() {
-        if (paused) {
-            return;
-        }
+        if (paused) return;
         paused = true;
     }
 
@@ -666,9 +571,7 @@ public class DdTorusView extends SurfaceView implements SurfaceHolder.Callback, 
         for (int j = 0; j < 15; j++) {
             int i = 0;
             for (; i < 15; i++) {
-                if (game.field[i][j] == null) {
-                    break;
-                }
+                if (game.field[i][j] == null) break;
             }
             if (i == 15) {
                 for (i = 0; i < 15; i++) {
@@ -685,9 +588,7 @@ public class DdTorusView extends SurfaceView implements SurfaceHolder.Callback, 
             animating = true;
             animatingStartTime = game.time;
             animatingLines = cleared;
-        } else {
-            afterPlace();
-        }
+        } else afterPlace();
     }
 
     void prepare() {
@@ -776,9 +677,9 @@ public class DdTorusView extends SurfaceView implements SurfaceHolder.Callback, 
         final EditText editText = new EditText(ddTorus);
         builder.setView(editText);
         builder.setCancelable(false);
-        builder.setTitle("Please fill your name");
+        builder.setTitle(R.string.fill_name);
 
-        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String name = editText.getText().toString();
@@ -789,9 +690,7 @@ public class DdTorusView extends SurfaceView implements SurfaceHolder.Callback, 
                         if (recs.get(i).score < score) {
                             recs.get(i + 1).score = recs.get(i).score;
                             recs.get(i + 1).name = recs.get(i).name;
-                        } else {
-                            break;
-                        }
+                        } else break;
                     }
                     recs.get(i + 1).score = score;
                     recs.get(i + 1).name = name;
@@ -800,9 +699,7 @@ public class DdTorusView extends SurfaceView implements SurfaceHolder.Callback, 
                         if (recs.get(i).score > score) {
                             recs.get(i + 1).score = recs.get(i).score;
                             recs.get(i + 1).name = recs.get(i).name;
-                        } else {
-                            break;
-                        }
+                        } else break;
                     }
                     recs.get(i + 1).score = score;
                     recs.get(i + 1).name = name;
@@ -811,7 +708,7 @@ public class DdTorusView extends SurfaceView implements SurfaceHolder.Callback, 
             }
         });
 
-        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();
@@ -964,10 +861,7 @@ public class DdTorusView extends SurfaceView implements SurfaceHolder.Callback, 
     }
 
     boolean isInArea(ArrayList<MpangoGame.Coords> arr, float ex, float ey) {
-        float minX;
-        float maxX;
-        float minY;
-        float maxY;
+        float minX, maxX, minY, maxY;
         MpangoGame.Coords area;
         MpangoGame.Coord pttl;
         MpangoGame.Coord ptbr;
@@ -981,16 +875,14 @@ public class DdTorusView extends SurfaceView implements SurfaceHolder.Callback, 
             minY = pttl.y <= ptbr.y ? pttl.y : ptbr.y;
             maxY = pttl.y >= ptbr.y ? pttl.y : ptbr.y;
 
-            if (ex >= minX && ex <= maxX && ey >= minY && ey <= maxY) {
-                return true;
-            }
+            if (ex >= minX && ex <= maxX && ey >= minY && ey <= maxY) return true;
         }
         return false;
     }
 
     void goWelcome() {
         ddTorus.startActivity(new Intent(ddTorus, BbWelcome.class));
-        ((Activity) ddTorus).finish();
+        (ddTorus).finish();
     }
 
     void help() {
@@ -1024,14 +916,12 @@ public class DdTorusView extends SurfaceView implements SurfaceHolder.Callback, 
                         if (Mpango3D.KEYS) {
                             if (ey >= TOP + HEIGHT - leftBmp.getHeight() && ey <= TOP + HEIGHT) {
                                 if (ex >= LEFT + 4 && ex <= LEFT + 4 + leftBmp.getWidth()) {
-                                    //å�‘å·¦
                                     if (!keysDown.left) {
                                         keysDown.left = true;
                                         nextFrame("left");
                                         gesture = KEY_LEFT;
                                     }
                                 } else if (ex >= LEFT + WIDTH - rightBmp.getWidth() && ex <= LEFT + WIDTH) {
-                                    //å�‘å�³
                                     if (!keysDown.right) {
                                         keysDown.right = true;
                                         nextFrame("right");
@@ -1049,13 +939,11 @@ public class DdTorusView extends SurfaceView implements SurfaceHolder.Callback, 
                             if (ey >= TOP + HEIGHT - leftBmp.getHeight() - rotateBmp.getHeight() &&
                                     ey <= TOP + HEIGHT - leftBmp.getHeight()) {
                                 if (ex >= LEFT + 4 && ex <= LEFT + 4 + leftBmp.getWidth()) {
-                                    //å�‘ä¸‹
                                     //keysDown.down = 1;
                                     keysDown.down = true;
                                     nextFrame(null);
                                     return false;
                                 } else if (ex >= LEFT + WIDTH - rightBmp.getWidth() && ex <= LEFT + WIDTH) {
-                                    //æ—‹è½¬
                                     rotate(1, false);
                                 }
                             }
@@ -1073,11 +961,8 @@ public class DdTorusView extends SurfaceView implements SurfaceHolder.Callback, 
             if (ex >= LEFT + (WIDTH - pauseBmp.getWidth()) * 0.5f && ex <= LEFT + (WIDTH + pauseBmp.getWidth()) * 0.5f &&
                     ey >= TOP + HEIGHT - pauseBmp.getHeight() && ey <= TOP + HEIGHT) {
                 drawFrame();
-                if (paused) {
-                    control.resumeGame();
-                } else {
-                    control.pauseGame();
-                }
+                if (paused) control.resumeGame();
+                else control.pauseGame();
                 return false;
             }
             if (paused) {
@@ -1094,19 +979,9 @@ public class DdTorusView extends SurfaceView implements SurfaceHolder.Callback, 
                         ui.menuMode();
                         goWelcome();
                     }
-//                    else if (ey >= TOP + 0.5f * HEIGHT + 1.04f * quitBmp.getHeight() && ey <= TOP + 0.5f * HEIGHT + 1.04f * quitBmp.getHeight() + facebookBmp.getHeight()) {
-//                        ddTorus.shareOnFacebook = new ShareOnFacebook(ddTorus);
-//                        ddTorus.shareOnFacebook.authorize();
-//                    }
-                    /*else if(ey >= TOP + 0.5f * HEIGHT + 1.04f * quitBmp.getHeight() + 1.04f * facebookBmp.getHeight() &&
-                             ey <= TOP + 0.5f * HEIGHT + 1.04f * quitBmp.getHeight() + 1.04f * facebookBmp.getHeight() + twitterBmp.getHeight()){
-                             Log.d("Test", "twitter-------------------------");
-                             ddTorus.doOauth();
-                         }*/
                 }
             }
-        } else    //æ¸¸æˆ�ç»“æ�Ÿ
-        {
+        } else {
             if (ex >= LEFT + (WIDTH - restartBmp.getWidth()) * 0.5f && ex <= LEFT + (WIDTH + restartBmp.getWidth()) * 0.5f) {
                 if (ey >= TOP + 126 + gameOverBmp.getHeight() + 1.12f * restartBmp.getHeight() &&
                         ey <= TOP + 126 + gameOverBmp.getHeight() + 2.12f * restartBmp.getHeight()) {
@@ -1119,15 +994,6 @@ public class DdTorusView extends SurfaceView implements SurfaceHolder.Callback, 
                     drawFrame();
                     control.restartGame();
                 }
-//                else if (ey >= TOP + 126 + gameOverBmp.getHeight() + 2.16f * restartBmp.getHeight() &&
-//                        ey <= TOP + 126 + gameOverBmp.getHeight() + 2.16f * restartBmp.getHeight() + facebookBmp.getHeight()) {
-//                    ddTorus.shareOnFacebook = new ShareOnFacebook((Activity) ddTorus);
-//                    ddTorus.shareOnFacebook.authorize();
-//                }
-                /*else if(ey >= TOP + 126 + gameOverBmp.getHeight() + 2.16f * restartBmp.getHeight() + 1.04f * facebookBmp.getHeight() &&
-                        ey <= TOP + 126 + gameOverBmp.getHeight() + 2.16f * restartBmp.getHeight() + 1.04f * facebookBmp.getHeight() + twitterBmp.getHeight()){
-                        ddTorus.doOauth();
-                    }*/
             }
         }
         return false;
@@ -1141,35 +1007,25 @@ public class DdTorusView extends SurfaceView implements SurfaceHolder.Callback, 
     private final static float FLING_MIN_DISTANCE = 10.0f;
 
     @Override
-    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
-                           float velocityY) {
-        if (Mpango3D.HELP || keysDown.down) {
-            return false;
-        }
+    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+        if (Mpango3D.HELP || keysDown.down) return false;
         float distanceX = e1.getX() - e2.getX();
-        //float distanceY = e2.getY() - e1.getY();
         if (!over && !paused) {
             if (distanceX > FLING_MIN_DISTANCE) {
-                //å�‘å·¦
                 if (!keysDown.left) {
                     keysDown.left = true;
                     nextFrame("left");
                     gesture = KEY_LEFT;
                 }
             } else if ((-distanceX) > FLING_MIN_DISTANCE) {
-                //å�‘å�³
                 if (!keysDown.right) {
                     keysDown.right = true;
                     nextFrame("right");
                     gesture = KEY_RIGHT;
                 }
             }
-            if (gesture == KEY_LEFT) {
-                keysDown.left = false;
-            }
-            if (gesture == KEY_RIGHT) {
-                keysDown.right = false;
-            }
+            if (gesture == KEY_LEFT) keysDown.left = false;
+            if (gesture == KEY_RIGHT) keysDown.right = false;
             gesture = 0;
         }
         return false;
@@ -1180,8 +1036,7 @@ public class DdTorusView extends SurfaceView implements SurfaceHolder.Callback, 
     }
 
     @Override
-    public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX,
-                            float distanceY) {
+    public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
         return false;
     }
 
@@ -1193,14 +1048,11 @@ public class DdTorusView extends SurfaceView implements SurfaceHolder.Callback, 
     public boolean onSingleTapUp(MotionEvent e) {
         float ex = e.getX() + LEFT;
         float ey = e.getY() + TOP;
-        if (!Mpango3D.HELP && !over && !paused && !keysDown.down/*keysDown.down == 0*/ && ex >= game.dropPositions[0] && ex <= game.dropPositions[1] &&
+        if (!Mpango3D.HELP && !over && !paused && !keysDown.down && ex >= game.dropPositions[0] && ex <= game.dropPositions[1] &&
                 ey >= game.dropPositions[2] && ey <= game.dropPositions[3]) {
-            //å�˜å½¢
             rotate(1, false);
         }
-        if (keysDown.down) {
-            keysDown.down = false;
-        }
+        if (keysDown.down) keysDown.down = false;
         return false;
     }
 

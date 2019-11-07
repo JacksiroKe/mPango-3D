@@ -1,6 +1,5 @@
 package com.jackson_siro.mpango;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -18,9 +17,6 @@ import android.widget.FrameLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class GgSettings extends AppCompatActivity {
 
     private SettingView settingView;
@@ -28,13 +24,12 @@ public class GgSettings extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         FrameLayout root = new FrameLayout(this);
-        root.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT,
-                LayoutParams.FILL_PARENT));
+        root.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT));
 
         settingView = new SettingView(this, null);
         root.addView(settingView);
@@ -58,22 +53,11 @@ public class GgSettings extends AppCompatActivity {
         return true;
     }
 
-    public class SettingView extends SurfaceView implements OnGestureListener,
-            SurfaceHolder.Callback {
+    public class SettingView extends SurfaceView implements OnGestureListener, SurfaceHolder.Callback {
         private GestureDetector mGestureDetector;
         private SurfaceHolder holder;
-        private Bitmap backgroundBmp;
-        private Bitmap mainmenuBmp;
-        private Bitmap boxBmp;
-        private Bitmap selectionBmp;
-        private Bitmap tinyboxBmp;
-        // private Bitmap deselectionBmp;
-        private int WIDTH = 480;
-        private int HEIGHT = 800;
-        // ç”»å¸ƒç›¸å¯¹å��æ ‡
-        private int LEFT = -159;
-        private int TOP = -183; // 533
-        // private int BASEY;
+        private Bitmap backgroundBmp, mainmenuBmp, boxBmp, selectionBmp, tinyboxBmp, deselectionBmp;
+        private int WIDTH = 480, HEIGHT = 800, LEFT = -159, TOP = -183, BASEY;
         private Typeface typeface;
 
         public SettingView(Context context, AttributeSet attrs) {
@@ -84,28 +68,22 @@ public class GgSettings extends AppCompatActivity {
             setLongClickable(true);
             holder = getHolder();
             holder.addCallback(this);
-            backgroundBmp = BitmapFactory.decodeResource(
-                    context.getResources(), R.drawable.garbagebackground);
+            backgroundBmp = BitmapFactory.decodeResource(context.getResources(), R.drawable.nairobicity);
 
-            DisplayMetrics dm = new DisplayMetrics();
+            DisplayMetrics dm;
             dm = getApplicationContext().getResources().getDisplayMetrics();
             WIDTH = dm.widthPixels;
             HEIGHT = dm.heightPixels;
-            mainmenuBmp = Mpango3D.scaleBitmap(context, R.drawable.mainmenu,
-                    WIDTH * 0.5f, HEIGHT * 0.1f);
-            boxBmp = Mpango3D.scaleBitmap(context, R.drawable.largebox,
-                    WIDTH * 0.82f, HEIGHT * 0.58f);
-            selectionBmp = Mpango3D.scaleBitmap(context,
-                    R.drawable.selection, WIDTH * 0.09f, WIDTH * 0.09f);
-            // deselectionBmp = Mpango3D.scaleBitmap(context,
-            // R.drawable.deselection, WIDTH * 0.12f, HEIGHT * 0.07f);
-            tinyboxBmp = Mpango3D.scaleBitmap(context, R.drawable.tinybox,
-                    WIDTH * 0.1f, WIDTH * 0.1f);
+            mainmenuBmp = Mpango3D.scaleBitmap(context, R.drawable.mainmenu, WIDTH * 0.5f, HEIGHT * 0.1f);
+            boxBmp = Mpango3D.scaleBitmap(context, R.drawable.largebox, WIDTH * 0.82f, HEIGHT * 0.58f);
+            selectionBmp = Mpango3D.scaleBitmap(context, R.drawable.selection, WIDTH * 0.09f, WIDTH * 0.09f);
+            deselectionBmp = Mpango3D.scaleBitmap(context, R.drawable.tick, WIDTH * 0.12f, HEIGHT * 0.07f);
+            tinyboxBmp = Mpango3D.scaleBitmap(context, R.drawable.tinybox, WIDTH * 0.1f, WIDTH * 0.1f);
 
             AssetManager am = context.getAssets();
-            typeface = Typeface.createFromAsset(am, "222-CAI978.ttf");
+            typeface = Typeface.createFromAsset(am, "ComicSansMS3.ttf");
             TOP = (HEIGHT == 480 ? -138 : HEIGHT == 533 ? -183 : -213);
-            // BASEY = (HEIGHT == 480 ? 301 : HEIGHT == 533 ? 346 : 376);
+            BASEY = (HEIGHT == 480 ? 301 : HEIGHT == 533 ? 346 : 376);
         }
 
         void drawFrame() {
@@ -116,62 +94,39 @@ public class GgSettings extends AppCompatActivity {
                 paint.setAntiAlias(true);
                 paint.setStyle(Style.FILL);
                 paint.setColor(0xff000000);
-                canvas.drawBitmap(backgroundBmp, null, new RectF(LEFT, TOP,
-                        WIDTH + LEFT, HEIGHT + TOP), paint);
-                canvas.drawBitmap(boxBmp, LEFT + (WIDTH - boxBmp.getWidth())
-                                * 0.5f, TOP + (HEIGHT - boxBmp.getHeight()) * 0.5f,
-                        paint);
-                canvas.drawBitmap(mainmenuBmp,
-                        LEFT + (WIDTH - mainmenuBmp.getWidth()) * 0.5f, TOP
-                                + HEIGHT - mainmenuBmp.getHeight() - 10, paint);
+
+                canvas.drawBitmap(backgroundBmp, null, new RectF(LEFT, TOP, WIDTH + LEFT, HEIGHT + TOP), paint);
+                canvas.drawBitmap(boxBmp, LEFT + (WIDTH - boxBmp.getWidth()) * 0.5f, TOP + (HEIGHT - boxBmp.getHeight()) * 0.5f, paint);
+                canvas.drawBitmap(mainmenuBmp, LEFT + (WIDTH - mainmenuBmp.getWidth()) * 0.5f, TOP + HEIGHT - mainmenuBmp.getHeight() - 10, paint);
 
                 paint.setTypeface(typeface);
                 paint.setColor(0xffffffff);
-                paint.setTextSize(22);
+                paint.setTextSize(60);
                 paint.setFakeBoldText(true);
                 FontMetrics fm = paint.getFontMetrics();
                 float fontHeight = (float) Math.ceil(fm.descent - fm.ascent);
-                float xPos = LEFT + (WIDTH - boxBmp.getWidth()) * 0.5f;
-                float yPos = TOP + (HEIGHT - boxBmp.getHeight()) * 0.5f
-                        + fontHeight;
-                canvas.drawText("Mipangilio", xPos + 10, yPos, paint);
+                float xPos = LEFT + (WIDTH - boxBmp.getWidth()) * 0.7f;
+                float yPos = TOP + (HEIGHT - boxBmp.getHeight()) * 0.5f + fontHeight;
+                canvas.drawText(getString(R.string.settings), xPos + 10, yPos, paint);
                 yPos = TOP + 0.5f * HEIGHT - boxBmp.getHeight() * 0.35f;
                 canvas.drawBitmap(tinyboxBmp, xPos + 15, yPos, paint);
-                canvas.drawBitmap(tinyboxBmp, xPos + 15, yPos + 0.15f * WIDTH,
-                        paint);
+                canvas.drawBitmap(tinyboxBmp, xPos + 15, yPos + 0.15f * WIDTH, paint);
                 canvas.drawBitmap(tinyboxBmp, xPos + 15, yPos + 0.3f * WIDTH, paint);
                 paint.setAlpha(255);
-                if (Mpango3D.HELP) {
-                    canvas.drawBitmap(selectionBmp, xPos + 15, yPos, paint);
-                }
-                /*
-                 * else { canvas.drawBitmap(deselectionBmp, xPos + 15, yPos,
-                 * paint); }
-                 */
-                if (Mpango3D.KEYS) {
-                    canvas.drawBitmap(selectionBmp, xPos + 15, yPos + 0.15f
-                            * WIDTH, paint);
-                }
-                /*
-                 * else { canvas.drawBitmap(deselectionBmp, xPos + 15, yPos +
-                 * 0.15f * WIDTH, paint); }
-                 */
-                if (Mpango3D.SOUND) {
-                    canvas.drawBitmap(selectionBmp, xPos + 15, yPos + 0.3f
-                            * WIDTH, paint);
-                }
+
+                if (Mpango3D.HELP) canvas.drawBitmap(selectionBmp, xPos + 15, yPos, paint);
+                if (Mpango3D.KEYS) canvas.drawBitmap(selectionBmp, xPos + 15, yPos + 0.15f * WIDTH, paint);
+                if (Mpango3D.SOUND) canvas.drawBitmap(selectionBmp, xPos + 15, yPos + 0.3f * WIDTH, paint);
 
                 paint.setColor(0xffffffff);
-                paint.setTextSize(17);
+                paint.setTextSize(45);
                 paint.getFontMetrics(fm);
                 paint.setFakeBoldText(false);
                 paint.setStrokeWidth(0);
                 fontHeight = (float) Math.ceil(fm.descent - fm.ascent);
-                canvas.drawText("Onyesha Vidokezo", xPos + 15 + WIDTH * 0.1f + 10,
-                        yPos + fontHeight, paint);
-                canvas.drawText("Onyesha Kicharazio", xPos + 15 + 0.1f * WIDTH + 10, yPos
-                        + 0.15f * WIDTH + fontHeight, paint);
-                canvas.drawText("Itoe Sauti", xPos + 15 + WIDTH * 0.1f + 10, yPos + fontHeight + 0.3f * WIDTH, paint);
+                canvas.drawText(getString(R.string.settings1), xPos + 15 + WIDTH * 0.1f + 10, yPos + fontHeight, paint);
+                canvas.drawText(getString(R.string.settings2), xPos + 15 + 0.1f * WIDTH + 10, yPos + 0.15f * WIDTH + fontHeight, paint);
+                canvas.drawText(getString(R.string.settings3), xPos + 15 + WIDTH * 0.1f + 10, yPos + fontHeight + 0.3f * WIDTH, paint);
                 /*
                  * float sFontHeight = fontHeight;
                  *
@@ -230,9 +185,7 @@ public class GgSettings extends AppCompatActivity {
                     && y <= TOP + 0.5f * HEIGHT - boxBmp.getHeight() * 0.35f
                     + 0.1f * WIDTH) {
                 Mpango3D.HELP = !Mpango3D.HELP;
-                SharedPreferences sp = getSharedPreferences(
-                        "com.jackson_siro.mpango",
-                        Context.MODE_PRIVATE);
+                SharedPreferences sp = getSharedPreferences("com.jackson_siro.mpango", Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = sp.edit();
                 editor.putBoolean("help", Mpango3D.HELP);
                 editor.commit();
@@ -247,9 +200,7 @@ public class GgSettings extends AppCompatActivity {
                     + 0.25f * WIDTH) {
                 Mpango3D.KEYS = !Mpango3D.KEYS;
                 // Mpango3D.KEYSPOS = true;
-                SharedPreferences sp = getSharedPreferences(
-                        "com.jackson_siro.mpango",
-                        Context.MODE_PRIVATE);
+                SharedPreferences sp = getSharedPreferences("com.jackson_siro.mpango", Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = sp.edit();
                 editor.putBoolean("keys", Mpango3D.KEYS);
                 // editor.putBoolean("keys' position", Mpango3D.KEYSPOS);
@@ -263,9 +214,7 @@ public class GgSettings extends AppCompatActivity {
                     && y >= TOP + 0.5f * HEIGHT - boxBmp.getHeight() * 0.35f + 0.3f * WIDTH
                     && y <= TOP + 0.5f * HEIGHT - boxBmp.getHeight() * 0.35f + 0.4f * WIDTH) {
                 Mpango3D.SOUND = !Mpango3D.SOUND;
-                SharedPreferences sp = getSharedPreferences(
-                        "com.jackson_siro.mpango",
-                        Context.MODE_PRIVATE);
+                SharedPreferences sp = getSharedPreferences("com.jackson_siro.mpango", Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = sp.edit();
                 editor.putBoolean("sound", Mpango3D.SOUND);
                 // editor.putBoolean("keys' position", Mpango3D.KEYSPOS);

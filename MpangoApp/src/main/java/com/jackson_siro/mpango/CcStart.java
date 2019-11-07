@@ -1,15 +1,11 @@
 package com.jackson_siro.mpango;
 
-import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.AssetManager;
 import android.graphics.*;
 import android.graphics.Paint.FontMetrics;
 import android.graphics.Paint.Style;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
@@ -25,15 +21,15 @@ public class CcStart extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         mpangoView = new MpangoView(this, null);
         setContentView(mpangoView);
     }
 
-    void goGames(int mode) {
+    void StartPlaying(int mode) {
         Intent startGame = new Intent(this, DdTorus.class);
         startGame.putExtra("com.jackson_siro.mpango.Mode", mode);
         this.startActivity(startGame);
@@ -54,19 +50,10 @@ public class CcStart extends AppCompatActivity {
         private GestureDetector mGestureDetector;
         private SurfaceHolder holder;
 
-        private Bitmap backgroundBmp;
-        private Bitmap logoBmp;
-        private Bitmap boxBmp;
-        private Bitmap traditionaltitleBmp;
-        private Bitmap timetitleBmp;
-        private Bitmap garbagetitleBmp;
-        private Bitmap gotraditionalBmp;
-        private Bitmap gotimeBmp;
-        private Bitmap gogarbageBmp;
+        private Bitmap backgroundBmp, logoBmp, boxBmp, levelLowTitleBmp, levelMidTitleBmp, levelHighTitleBmp, goLevelLowBmp, goLevelMidBmp, goLevelHighBmp;
         private Typeface typeface;
 
-        private int WIDTH = 480;
-        private int HEIGHT = 800;
+        private int WIDTH = 480, HEIGHT = 800;
 
         public MpangoView(Context context, AttributeSet attrs) {
             super(context, attrs);
@@ -75,89 +62,69 @@ public class CcStart extends AppCompatActivity {
             setLongClickable(true);
             holder = getHolder();
             holder.addCallback(this);
-            DisplayMetrics dm = new DisplayMetrics();
+            DisplayMetrics dm;
             dm = getApplicationContext().getResources().getDisplayMetrics();
             WIDTH = dm.widthPixels;
             HEIGHT = dm.heightPixels;
 
-            backgroundBmp = BitmapFactory.decodeResource(
-                    context.getResources(), R.drawable.garbagebackground);
-            logoBmp = Mpango3D.scaleBitmap(context, R.drawable.appicon,
-                    0.7f * WIDTH, 0.3f * HEIGHT);
-            boxBmp = Mpango3D.scaleBitmap(context, R.drawable.bigbox,
-                    0.71f * WIDTH, 0.2f * HEIGHT);
-            traditionaltitleBmp = Mpango3D.scaleBitmap(context,
-                    R.drawable.traditional, WIDTH * 0.32f, HEIGHT * 0.03f);
-            timetitleBmp = Mpango3D.scaleBitmap(context,
-                    R.drawable.timeattack, WIDTH * 0.32f, HEIGHT * 0.03f);
-            garbagetitleBmp = Mpango3D.scaleBitmap(context,
-                    R.drawable.garbage, WIDTH * 0.25f, HEIGHT * 0.03f);
-            gotraditionalBmp = Mpango3D.scaleBitmap(context,
-                    R.drawable.gotraditional, WIDTH * 0.17f, WIDTH * 0.17f);
-            gogarbageBmp = Mpango3D.scaleBitmap(context,
-                    R.drawable.gogarbage, WIDTH * 0.17f, WIDTH * 0.17f);
-            gotimeBmp = Mpango3D.scaleBitmap(context, R.drawable.gotimer,
-                    WIDTH * 0.17f, WIDTH * 0.17f);
+            backgroundBmp = BitmapFactory.decodeResource(context.getResources(), R.drawable.nairobicity);
+            logoBmp = Mpango3D.scaleBitmap(context, R.drawable.appicon, 0.7f * WIDTH, 0.3f * HEIGHT);
+            boxBmp = Mpango3D.scaleBitmap(context, R.drawable.bigbox, 0.71f * WIDTH, 0.2f * HEIGHT);
+
+            levelLowTitleBmp = Mpango3D.scaleBitmap(context, R.drawable.level_low, WIDTH * 0.32f, HEIGHT * 0.03f);
+            levelMidTitleBmp = Mpango3D.scaleBitmap(context,  R.drawable.level_mid, WIDTH * 0.32f, HEIGHT * 0.03f);
+            levelHighTitleBmp = Mpango3D.scaleBitmap(context, R.drawable.level_high, WIDTH * 0.25f, HEIGHT * 0.03f);
+
+            goLevelLowBmp = Mpango3D.scaleBitmap(context, R.drawable.tick, WIDTH * 0.17f, WIDTH * 0.17f);
+            goLevelHighBmp = Mpango3D.scaleBitmap(context, R.drawable.tick, WIDTH * 0.17f, WIDTH * 0.17f);
+            goLevelMidBmp = Mpango3D.scaleBitmap(context, R.drawable.tick, WIDTH * 0.17f, WIDTH * 0.17f);
 
             AssetManager am = context.getAssets();
-            typeface = Typeface.createFromAsset(am, "222-CAI978.ttf");
+            typeface = Typeface.createFromAsset(am, "ComicSansMS3.ttf");
         }
 
         void drawFrame() {
             Canvas canvas = holder.lockCanvas();
             if (canvas != null) {
                 Paint paint = new Paint();
-                canvas.drawBitmap(backgroundBmp, null, new RectF(0, 0, WIDTH,
-                        HEIGHT), paint);
+                canvas.drawBitmap(backgroundBmp, null, new RectF(0, 0, WIDTH, HEIGHT), paint);
                 float yPos = 41.0f;
-                canvas.drawBitmap(logoBmp, (WIDTH - logoBmp.getWidth()) / 2.0f,
-                        yPos, paint);
+                canvas.drawBitmap(logoBmp, (WIDTH - logoBmp.getWidth()) / 2.0f, yPos, paint);
                 float xPos = (WIDTH - boxBmp.getWidth()) / 2.0f;
                 yPos += logoBmp.getHeight();
                 float h = (HEIGHT - boxBmp.getHeight() * 3 - yPos) * 0.25f;
                 float hL = boxBmp.getHeight() / 9.0f;
                 yPos += h;
+
                 canvas.drawBitmap(boxBmp, xPos, yPos, paint);
-                canvas.drawBitmap(gogarbageBmp, xPos + hL, yPos + hL, paint);
-                canvas.drawBitmap(garbagetitleBmp, xPos + hL
-                        + gogarbageBmp.getWidth(), yPos + hL, paint);
-                String content = Mpango3D.getHelpContent("kawaida.txt",
-                        CcStart.this);
-                paint.setTextSize(12);
-                paint.setStyle(Style.STROKE);
+                canvas.drawBitmap(goLevelHighBmp, xPos + hL, yPos + hL, paint);
+                canvas.drawBitmap(levelHighTitleBmp, xPos + hL + goLevelHighBmp.getWidth(), yPos + hL, paint);
+
+                paint.setTextSize(25);
+                paint.setStyle(Style.FILL);
                 paint.setTypeface(typeface);
                 paint.setColor(0xffffffff);
                 FontMetrics fm = paint.getFontMetrics();
                 float sFontHeight = (float) Math.ceil(fm.descent - fm.ascent);
                 float lineSpace = sFontHeight / 10.0f;
-                float lineWidth = WIDTH - 2.0f * xPos - 2.5f * hL
-                        - gotraditionalBmp.getWidth();
-                float baseHeight = yPos + hL + traditionaltitleBmp.getHeight();
-                float startXPos = xPos + hL + gotraditionalBmp.getWidth();
-                Mpango3D.drawContent(content, sFontHeight, lineSpace,
-                        lineWidth, startXPos, baseHeight, canvas, paint);
+                float lineWidth = WIDTH - 2.0f * xPos - 2.5f * hL - goLevelLowBmp.getWidth();
+                float baseHeight = yPos + hL + levelLowTitleBmp.getHeight();
+                float startXPos = xPos + hL + goLevelLowBmp.getWidth();
+                Mpango3D.drawContent(getString(R.string.level1), sFontHeight, lineSpace, lineWidth, startXPos, baseHeight, canvas, paint);
 
                 yPos += boxBmp.getHeight() + h;
                 canvas.drawBitmap(boxBmp, xPos, yPos, paint);
-                canvas.drawBitmap(gotimeBmp, xPos + hL, yPos + hL, paint);
-                canvas.drawBitmap(timetitleBmp,
-                        xPos + hL + gotraditionalBmp.getWidth(), yPos + hL,
-                        paint);
-                content = Mpango3D.getHelpContent("wastani.txt", CcStart.this);
-                baseHeight = yPos + hL + timetitleBmp.getHeight();
-                Mpango3D.drawContent(content, sFontHeight, lineSpace,
-                        lineWidth, startXPos, baseHeight, canvas, paint);
+                canvas.drawBitmap(goLevelMidBmp, xPos + hL, yPos + hL, paint);
+                canvas.drawBitmap(levelMidTitleBmp, xPos + hL + goLevelLowBmp.getWidth(), yPos + hL, paint);
+                baseHeight = yPos + hL + levelMidTitleBmp.getHeight();
+                Mpango3D.drawContent(getString(R.string.level2), sFontHeight, lineSpace, lineWidth, startXPos, baseHeight, canvas, paint);
 
                 yPos += boxBmp.getHeight() + h;
                 canvas.drawBitmap(boxBmp, xPos, yPos, paint);
-                canvas.drawBitmap(gotraditionalBmp, xPos + hL, yPos + hL, paint);
-                canvas.drawBitmap(traditionaltitleBmp,
-                        xPos + hL + gotraditionalBmp.getWidth(), yPos + hL,
-                        paint);
-                content = Mpango3D.getHelpContent("ngumu.txt", CcStart.this);
-                baseHeight = yPos + hL + garbagetitleBmp.getHeight();
-                Mpango3D.drawContent(content, sFontHeight, lineSpace,
-                        lineWidth, startXPos, baseHeight, canvas, paint);
+                canvas.drawBitmap(goLevelLowBmp, xPos + hL, yPos + hL, paint);
+                canvas.drawBitmap(levelLowTitleBmp, xPos + hL + goLevelLowBmp.getWidth(), yPos + hL, paint);
+                baseHeight = yPos + hL + levelHighTitleBmp.getHeight();
+                Mpango3D.drawContent(getString(R.string.level3), sFontHeight, lineSpace, lineWidth, startXPos, baseHeight, canvas, paint);
 
                 holder.unlockCanvasAndPost(canvas);
             }
@@ -175,50 +142,16 @@ public class CcStart extends AppCompatActivity {
             float yPos = 41.0f + logoBmp.getHeight();
             float h = (HEIGHT - boxBmp.getHeight() * 3 - yPos) * 0.25f;
 
-            if (x >= (WIDTH - boxBmp.getWidth()) / 2.0f
-                    && x <= WIDTH + boxBmp.getWidth() / 2.0f) {
-                if (y >= yPos + h && y <= yPos + h + boxBmp.getHeight()) {
-                    goGames(3);
-                } else if (y >= yPos + boxBmp.getHeight() + 2.0f * h
-                        && y <= yPos + 2.0f * (boxBmp.getHeight() + h)) {
-                    goGames(2);
-                    //fullVersion();
-                } else if (y >= yPos + 2.0f * boxBmp.getHeight() + 3.0f * h
-                        && y <= yPos + 4.0f * boxBmp.getHeight() + 3.0f * h) {
-                    goGames(1);
-                    //fullVersion();
-                }
+            if (x >= (WIDTH - boxBmp.getWidth()) / 2.0f && x <= WIDTH + boxBmp.getWidth() / 2.0f) {
+                if (y >= yPos + h && y <= yPos + h + boxBmp.getHeight()) StartPlaying(3);
+                else if (y >= yPos + boxBmp.getHeight() + 2.0f * h && y <= yPos + 2.0f * (boxBmp.getHeight() + h)) StartPlaying(2);
+                else if (y >= yPos + 2.0f * boxBmp.getHeight() + 3.0f * h && y <= yPos + 4.0f * boxBmp.getHeight() + 3.0f * h) StartPlaying(1);
             }
             return false;
         }
 
-        private void fullVersion() {
-            new AlertDialog.Builder(CcStart.this)
-                    .setTitle(R.string.alerttitle)
-                    .setMessage(R.string.altersumary)
-                    .setPositiveButton(R.string.alertyes,
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog,
-                                                    int whichButton) {
-                                    Uri uri = Uri
-                                            .parse("market://details?id=com.jackson_siro.mpangopro");
-                                    Intent it = new Intent(Intent.ACTION_VIEW,
-                                            uri);
-                                    startActivity(it);
-                                }
-                            })
-                    .setNegativeButton(R.string.alertno,
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog,
-                                                    int whichButton) {
-                                    /* User clicked OK so do some stuff */
-                                }
-                            }).create().show();
-        }
-
         @Override
-        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
-                               float velocityY) {
+        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
             return false;
         }
 
@@ -227,8 +160,7 @@ public class CcStart extends AppCompatActivity {
         }
 
         @Override
-        public boolean onScroll(MotionEvent e1, MotionEvent e2,
-                                float distanceX, float distanceY) {
+        public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
             return false;
         }
 

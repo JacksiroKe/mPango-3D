@@ -1,70 +1,34 @@
 package com.jackson_siro.mpango;
 
-        import androidx.appcompat.app.AppCompatActivity;
-        import android.content.Context;
-        import android.content.Intent;
-        import android.content.SharedPreferences;
-        import android.content.res.Configuration;
-        import android.graphics.Bitmap;
-        import android.graphics.Canvas;
-        import android.graphics.Paint;
-        import android.graphics.Paint.Style;
-        import android.graphics.RectF;
-        import android.os.Bundle;
-        import android.util.AttributeSet;
-        import android.util.DisplayMetrics;
-        import android.view.*;
-        import android.view.GestureDetector.OnGestureListener;
+import androidx.appcompat.app.AppCompatActivity;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Paint.Style;
+import android.graphics.RectF;
+import android.os.Bundle;
+import android.util.AttributeSet;
+import android.util.DisplayMetrics;
+import android.view.*;
+import android.view.GestureDetector.OnGestureListener;
 
 public class BbWelcome extends AppCompatActivity {
     private WelcomeView welcomeView;
     private boolean end = false;
-    private static final int MENU_COPYRIGHT = 1;
-    private static final int MENU_ABOUT = 2;
-    //private View aboutView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         welcomeView = new WelcomeView(this, null);
         setContentView(welcomeView);
     }
-
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        super.onCreateOptionsMenu(menu);
-//
-//        menu.add(0, MENU_COPYRIGHT, 0, R.string.menu_copyright);
-//        menu.add(0, MENU_ABOUT, 0, R.string.menu_about);
-//        return true;
-//    }
-
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        LayoutInflater factory = LayoutInflater.from(this);
-//        final View optionView;
-//        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-//        switch (item.getItemId()) {
-//            case MENU_COPYRIGHT:
-//                optionView = factory.inflate(R.layout.copyright, null);
-//                builder.setTitle(R.string.menu_copyright);
-//                builder.setPositiveButton("OK", null);
-//                builder.setView(optionView);
-//                builder.show();
-//                return true;
-//            case MENU_ABOUT:
-//                optionView = factory.inflate(R.layout.about_dlg, null);
-//                builder.setTitle("About Tetris 3D");
-//                builder.setPositiveButton("OK", null);
-//                builder.setView(optionView);
-//                builder.show();
-//                return true;
-//        }
-//        return false;
-//    }
 
     private void doPlay() {
         this.startActivity(new Intent(this, CcStart.class));
@@ -123,7 +87,7 @@ public class BbWelcome extends AppCompatActivity {
 
         private int WIDTH = 480;
         private int HEIGHT = 854;
-        //画布相对坐标
+
         private int LEFT = 0;
         private int TOP = 0;
 
@@ -139,21 +103,19 @@ public class BbWelcome extends AppCompatActivity {
             dm = getApplicationContext().getResources().getDisplayMetrics();
             WIDTH = dm.widthPixels;
             HEIGHT = dm.heightPixels;
-            backgroundBmp = Mpango3D.scaleBitmap(context, R.drawable.garbagebackground, WIDTH, HEIGHT);
+            backgroundBmp = Mpango3D.scaleBitmap(context, R.drawable.nairobicity, WIDTH, HEIGHT);
             logoBmp = Mpango3D.scaleBitmap(context, R.drawable.appicon, 0.7f * WIDTH, 0.3f * HEIGHT);
             playBmp = Mpango3D.scaleBitmap(context, R.drawable.play, 0.65f * WIDTH, 0.14f * HEIGHT);
             settingBmp = Mpango3D.scaleBitmap(context, R.drawable.settings, 0.65f * WIDTH, 0.14f * HEIGHT);
             highBmp = Mpango3D.scaleBitmap(context, R.drawable.highscores, 0.65f * WIDTH, 0.14f * HEIGHT);
             helpBmp = Mpango3D.scaleBitmap(context, R.drawable.help, 0.65f * WIDTH, 0.14f * HEIGHT);
 
-            SharedPreferences sp = getSharedPreferences(
-                    "com.jackson_siro.mpango_preferences",
-                    Context.MODE_PRIVATE);
+            SharedPreferences sp = getSharedPreferences(  "com.jackson_siro.mpango_preferences", Context.MODE_PRIVATE);
             Mpango3D.HELP = sp.getBoolean("help", true);
             Mpango3D.KEYS = sp.getBoolean("keys", true);
             Mpango3D.SOUND = sp.getBoolean("sound", true);
-            //Mpango3D.KEYSPOS = sp.getBoolean("keys' position", true);
-            //Mpango3D.SOUND = sp.getBoolean("sound", true);
+            Mpango3D.KEYSPOS = sp.getBoolean("keys' position", true);
+            Mpango3D.SOUND = sp.getBoolean("sound", true);
         }
 
         void drawFrame() {
@@ -189,17 +151,17 @@ public class BbWelcome extends AppCompatActivity {
             float y = e.getY() + TOP;
             if (x >= (WIDTH - playBmp.getWidth()) * 0.5f + LEFT && x <= (WIDTH + playBmp.getWidth()) * 0.5f + LEFT) {
                 if (y >= logoBmp.getHeight() + playBmp.getHeight() * 0.04f + 41 + TOP && y <= logoBmp.getHeight() + playBmp.getHeight() * 1.04f + 41 + TOP) {
-                    //drawFrame();
+                    drawFrame();
                     doPlay();
                     return false;
                 } else if (y >= logoBmp.getHeight() + playBmp.getHeight() * 1.08f + 41 + TOP && y <= logoBmp.getHeight() + playBmp.getHeight() * 2.08f + 41 + TOP) {
-                    //drawFrame();
+                    drawFrame();
                     doSetting();
                 } else if (y >= logoBmp.getHeight() + playBmp.getHeight() * 2.12f + 41 + TOP && y <= logoBmp.getHeight() + playBmp.getHeight() * 3.12f + 41 + TOP) {
-                    //drawFrame();
+                    drawFrame();
                     showHighScores();
                 } else if (y >= logoBmp.getHeight() + playBmp.getHeight() * 3.16f + 41 + TOP && y <= logoBmp.getHeight() + playBmp.getHeight() * 4.16f + 41 + TOP) {
-                    //drawFrame();
+                    drawFrame();
                     doHelp();
                 }
             }
