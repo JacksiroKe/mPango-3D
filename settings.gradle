@@ -1,2 +1,2 @@
-include ':MpangoApp'
+include ':Mpango'
 rootProject.name='Mpango3D'
