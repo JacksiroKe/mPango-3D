@@ -1,0 +1,28 @@
+{
+    "logs": [
+        {
+            "outputFile": "D:\\Android\\src\\mPango-3D\\Mpango\\build\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values-zh\\values-zh.xml",
+            "map": [
+                {
+                    "source": "D:\\Android\\src\\mPango-3D\\Mpango\\src\\main\\res\\values-zh\\strings.xml",
+                    "from": {
+                        "startLines": "16,4,15,5,2",
+                        "startColumns": "4,4,4,4,4",
+                        "startOffsets": "652,113,600,175,57",
+                        "endLines": "16,4,15,14,2",
+                        "endColumns": "46,60,50,13,52",
+                        "endOffsets": "694,169,646,594,105"
+                    },
+                    "to": {
+                        "startLines": "2,3,4,5,15",
+                        "startColumns": "4,4,4,4,4",
+                        "startOffsets": "55,102,163,214,629",
+                        "endLines": "2,3,4,14,15",
+                        "endColumns": "46,60,50,13,52",
+                        "endOffsets": "97,158,209,624,677"
+                    }
+                }
+            ]
+        }
+    ]
+}
