@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">app 3D</string>
+    <string name="menu_about">About app 3D</string>
+    <string name="developer">© AppSmata</string>
+    <string name="yes">Ndio</string>
+    <string name="no">La</string>
+
+    <string name="alerttitle">Download Full Version</string>
+    <string name="altersumary">This game mode is availa
+        ble for full version only!\n\nKey benefits of full version:\n♥ Time Attack Mode Available\n♥ Garbage Mode
+        Available\n♥
+        100% Ads Free\n♥ No
+        permissions\n\nTo develop more great
+        live
+        wallpapers, we need some donation to keep running. Please support
+        us
+        and download the full version.
+    </string>
+    <string name="menu_copyright">Copyright</string>
+    <string name="alertyes">Yes, Download</string>
+    <string name="alertno">No, Thanks</string>
+    <string name="settings">Mipangilio</string>
+    <string name="settings1">Vidokezo</string>
+    <string name="settings2">Kicharazio</string>
+    <string name="settings3">Sauti</string>
+    <string name="level1">Una muda wa kutosha kujipatia alama nyingi iwezekanavyo huku kasi ikiongezeka.</string>
+    <string name="level2">Maliza mistari mingi iwezekavyo kwa dakika tano. Kasi haidiliki.</string>
+    <string name="level3">Maliza mistari yote ili usalie na mistari mitatu ya vipande haraka iwekanavyo.</string>
+    <string name="next_hint">Dokezo Lijalo</string>
+    <string name="fill_name">"Please fill your name"</string>
+    <string name="hint1">Gusa kipande kidondokacho ili kukigeuza.</string>
+    <string name="hint2">Guza sehemu tarajiwa ya kipande kidondokacho ili kuzidisha kasi ya kudondoka.</string>
+    <string name="hint3">Geuza kipande kidondoka kushoto au kulia kwa upande wako.</string>
+    <string name="how_to_play">Jinsi ya Kucheza</string>
+    <string name="how_to_play_desc1">Tumia ishara yako kuongoza vipande, ishara ya kulia hugeuza kipande kwelekea kulia ilhali ishara ya kushoto hugeuza kipande kushoto. Kuguza sehemu tarajiwa, kipande kitadondoka kwa kasi zaidi. Ukiguza kipande kinachoanguka huzungusha kipande kwa mzunguko wa akrabu.</string>
+    <string name="how_to_play_desc2">Punde mviringo wa usawa wa vipande 15 umejazwa mstari huo utadondoka na utapata alama 10. Ikiwa mistari mingi itadondoshwa kwa wakati mmoja utapata alama za ziada.</string>
+</resources>

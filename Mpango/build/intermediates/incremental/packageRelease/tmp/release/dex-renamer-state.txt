@@ -1,4 +1,0 @@
-#Tue Jan 14 04:44:29 EAT 2020
-base.0=D\:\\Android\\src\\mPango-3D\\Mpango\\build\\intermediates\\dex\\release\\mergeDexRelease\\out\\classes.dex
-path.0=classes.dex
-renamed.0=classes.dex
