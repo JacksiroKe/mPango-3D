@@ -1,2 +1,2 @@
-include ':Mpango'
-rootProject.name='Mpango3D'
+include ':app'
+rootProject.name = "Mpango-3D"

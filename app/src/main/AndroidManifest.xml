@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:dist="http://schemas.android.com/apk/distribution"
+    package="com.jackson_siro.mpango"
+    android:installLocation="preferExternal">
+
+    <dist:module dist:instant="true" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity
+            android:name=".AppStart"
+            android:configChanges="keyboardHidden|orientation"
+            android:noHistory="true"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name="com.jackson_siro.mpango.BbWelcome" />
+        <activity android:name="com.jackson_siro.mpango.CcStart" />
+
+        <activity android:name="com.jackson_siro.mpango.DdTorus"/>
+        <activity android:name="com.jackson_siro.mpango.EeScores" />
+        <activity android:name="com.jackson_siro.mpango.FfHelp" />
+        <activity android:name="com.jackson_siro.mpango.GgSettings" />
+
+    </application>
+
+</manifest>
